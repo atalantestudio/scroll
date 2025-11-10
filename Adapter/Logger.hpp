@@ -1,0 +1,64 @@
+#pragma once
+
+#include "LogLevel.hpp"
+
+namespace ProjectA {
+	class Logger {
+		public:
+			// Returns the current argument injection pattern.
+			static const str8& getArgumentInjectionPattern();
+
+			// Replaces the current argument injection pattern.
+			static void setArgumentInjectionPattern(const str8& pattern);
+
+			template<typename Argument>
+			static str8 format(Argument&& argument);
+
+			template<typename Argument, typename... PackedArgument>
+			static str8 format(const str8& pattern, Argument&& argument, PackedArgument&&... arguments);
+
+			static void writeTimestamp(std::ostream& stream);
+
+		protected:
+			static inline constexpr const char8* LOG_LEVEL_NAMES[] = {
+				"",
+				"TRACE",
+				"DEBUG",
+				"INFO",
+				"WARNING",
+				"ERROR",
+				"",
+			};
+
+			static constexpr std::streamsize TIMESTAMP_SIZE = 14;
+
+			// The longest name in `LOG_LEVEL_NAMES`.
+			static constexpr std::streamsize MAX_LOG_LEVEL_NAME_SIZE = 7;
+
+			static constexpr uint64 LOG_INDENT = TIMESTAMP_SIZE + MAX_LOG_LEVEL_NAME_SIZE + 4;
+
+		protected:
+			static str8 argumentInjectionPattern;
+
+			static uint16 maxSourceSize;
+
+		public:
+			void setSource(const str8& source);
+
+		protected:
+			explicit Logger(LogLevel minLogLevel);
+
+			uint16 getLogIndentation() const;
+
+			static void write(std::ostream& stream, const str8& text);
+
+			// NOTE: `indentation` must not include the size of `text`.
+			static void writeIndented(std::ostream& stream, const str8& text, uint64 indentation, bool indentFirstLine, uint64 maxLineWidth);
+
+			void writeLog(std::ostream& stream, LogLevel level, const str8& message, uint64 maxLineWidth) const;
+
+		protected:
+			LogLevel minLogLevel;
+			str8 source;
+	};
+}
