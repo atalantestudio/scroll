@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "LogLevel.hpp"
 
@@ -41,6 +41,9 @@ namespace ProjectA {
 			static str8 argumentInjectionPattern;
 
 			static uint16 maxSourceSize;
+
+		public:
+			static void writePadded(std::ostream& stream, const str8& text, uint64 paddingSize);
 
 		protected:
 			explicit Logger(LogLevel minLogLevel, const str8& source);

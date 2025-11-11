@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ConsoleEscapeCode.hpp"
 #include "Logger.hpp"
@@ -21,6 +21,8 @@ namespace ProjectA {
 
 		public:
 			explicit ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, const str8& source);
+
+			std::ostream& getOutputStream();
 
 			void setOutputStream(std::ostream& stream);
 

@@ -1,6 +1,4 @@
-﻿#include "pch.hpp"
-
-#include "Adapter/Logger.hpp"
+﻿#include "Adapter/Logger.hpp"
 
 namespace ProjectA {
 	template<typename Argument>

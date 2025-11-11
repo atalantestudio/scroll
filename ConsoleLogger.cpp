@@ -44,13 +44,12 @@ namespace ProjectA {
 		#endif
 	}
 
-	void ConsoleLogger::setOutputStream(std::ostream& stream) {
-		this->stream = &stream;
+	std::ostream& ConsoleLogger::getOutputStream() {
+		return *stream;
 	}
 
-	template<typename... Argument>
-	void ConsoleLogger::writeEscapeCodes(Argument&&... codes) {
-		writeStreamEscapeCodes(*stream, std::forward<Argument>(codes)...);
+	void ConsoleLogger::setOutputStream(std::ostream& stream) {
+		this->stream = &stream;
 	}
 
 	void ConsoleLogger::print(const str8& string) {

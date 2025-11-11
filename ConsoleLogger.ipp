@@ -13,6 +13,11 @@
 		writeStreamEscapeCodesInternal(stream, std::forward<Argument>(codes)...);
 	}
 
+	template<typename... Argument>
+	void ConsoleLogger::writeEscapeCodes(Argument&&... codes) {
+		writeStreamEscapeCodes(*stream, std::forward<Argument>(codes)...);
+	}
+
 	template<typename Argument>
 	void ConsoleLogger::trace(const str8& file, uint32 line, Argument&& argument) {
 		std::ostream& stream = std::cerr;

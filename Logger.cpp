@@ -62,6 +62,10 @@ namespace ProjectA {
 		stream << text;
 	}
 
+	void Logger::writePadded(std::ostream& stream, const str8& text, uint64 paddingSize) {
+		stream << std::setw(paddingSize) << std::string(&text[0], text.count());
+	}
+
 	void Logger::writeIndented(std::ostream& stream, const str8& text, uint64 indentation, bool indentFirstLine, uint64 maxLineWidth) {
 		uint64 previousCharacterOffset = 0;
 		std::string line;
