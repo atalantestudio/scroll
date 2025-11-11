@@ -20,7 +20,7 @@ namespace ProjectA {
 			uint16 getLogLineWidth() const;
 
 		public:
-			explicit ConsoleLogger(std::ostream& stream, LogLevel minLogLevel);
+			explicit ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, const str8& source);
 
 			void setOutputStream(std::ostream& stream);
 
@@ -76,3 +76,5 @@ namespace ProjectA {
 			std::ostream* stream;
 	};
 }
+
+#include "ConsoleLogger.ipp"

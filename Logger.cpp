@@ -1,6 +1,6 @@
-﻿#pragma once
+﻿#include "pch.hpp"
 
-#include "Adapter/Adapter.hpp"
+#include "Adapter/Logger.hpp"
 
 namespace ProjectA {
 	std::ostream& operator <<(std::ostream& stream, const str8& value) {
@@ -25,38 +25,6 @@ namespace ProjectA {
 		argumentInjectionPattern = pattern;
 	}
 
-	template<typename Argument>
-	str8 Logger::format(Argument&& argument) {
-		std::ostringstream stream;
-
-		stream << argument;
-
-		// TODO: Don't use std::string.
-		return stream.str();
-	}
-
-	template<typename Argument, typename... PackedArgument>
-	str8 Logger::format(const str8& pattern, Argument&& argument, PackedArgument&&... arguments) {
-		const uint64 argumentInjectionPatternOffset = pattern.find(argumentInjectionPattern, 0);
-
-		if (argumentInjectionPatternOffset >= pattern.count()) {
-			return pattern;
-		}
-
-		const str8 formattedArgument = format(argument);
-
-		str8 updatedPattern(pattern.count() - argumentInjectionPattern.count() + formattedArgument.count());
-
-		std::copy_n(&pattern[0], argumentInjectionPatternOffset, &updatedPattern[0]);
-		std::copy(formattedArgument.begin(), formattedArgument.end(), &updatedPattern[argumentInjectionPatternOffset]);
-
-		if (argumentInjectionPatternOffset + argumentInjectionPattern.count() < pattern.count()) {
-			std::copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.count()]);
-		}
-
-		return format(updatedPattern, std::forward<PackedArgument>(arguments)...);
-	}
-
 	void Logger::writeTimestamp(std::ostream& stream) {
 		const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 		const std::time_t time = std::chrono::system_clock::to_time_t(now);
@@ -69,9 +37,16 @@ namespace ProjectA {
 		stream << '[' << std::put_time(&dateTime, "%H:%M:%S") << '.' << std::setw(3) << std::setfill('0') << milliseconds.count() << std::setfill(' ') << ']';
 	}
 
-	Logger::Logger(LogLevel minLogLevel) :
-		minLogLevel(minLogLevel)
-	{}
+	Logger::Logger(LogLevel minLogLevel, const str8& source) :
+		minLogLevel(minLogLevel),
+		source(source)
+	{
+		// TODO: max(a, b)
+		if (source.count() > maxSourceSize) {
+			// TODO: Size assertion?
+			maxSourceSize = static_cast<uint16>(source.count());
+		}
+	}
 
 	uint16 Logger::getLogIndentation() const {
 		uint16 indentation = static_cast<uint16>(LOG_INDENT + maxSourceSize);
@@ -140,15 +115,5 @@ namespace ProjectA {
 		stream << "  " << std::setw(MAX_LOG_LEVEL_NAME_SIZE) << LOG_LEVEL_NAMES[static_cast<uint8>(level)] << "  ";
 
 		writeIndented(stream, text, getLogIndentation(), false, maxLineWidth);
-	}
-
-	void Logger::setSource(const str8& source) {
-		this->source = source;
-
-		// TODO: max(a, b)
-		if (source.count() > maxSourceSize) {
-			// TODO: Size assertion?
-			maxSourceSize = static_cast<uint16>(source.count());
-		}
 	}
 }

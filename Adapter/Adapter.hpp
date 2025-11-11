@@ -17,7 +17,6 @@
 	#undef BACKGROUND_RED
 	#undef BACKGROUND_GREEN
 	#undef BACKGROUND_BLUE
-	#undef ERROR
 #endif
 
 #include "str8.hpp"

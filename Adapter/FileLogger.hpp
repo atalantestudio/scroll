@@ -6,7 +6,7 @@
 namespace ProjectA {
 	class FileLogger : public Logger {
 		public:
-			explicit FileLogger(std::ofstream& stream, LogLevel minLogLevel);
+			explicit FileLogger(std::ofstream& stream, LogLevel minLogLevel, const str8& source);
 
 			template<typename Argument>
 			void trace(const str8& file, uint32 line, Argument&& argument);
@@ -42,3 +42,5 @@ namespace ProjectA {
 			std::ofstream& stream;
 	};
 }
+
+#include "FileLogger.ipp"

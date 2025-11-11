@@ -42,11 +42,8 @@ namespace ProjectA {
 
 			static uint16 maxSourceSize;
 
-		public:
-			void setSource(const str8& source);
-
 		protected:
-			explicit Logger(LogLevel minLogLevel);
+			explicit Logger(LogLevel minLogLevel, const str8& source);
 
 			uint16 getLogIndentation() const;
 
@@ -62,3 +59,5 @@ namespace ProjectA {
 			str8 source;
 	};
 }
+
+#include "Logger.ipp"

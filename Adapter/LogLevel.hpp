@@ -1,6 +1,6 @@
 #pragma once
 
-// NOTE: Avoid confict with ERROR defined in Windows.h.
+// NOTE: Avoid confict with macro defined in Windows.h.
 #undef ERROR
 
 namespace ProjectA {
