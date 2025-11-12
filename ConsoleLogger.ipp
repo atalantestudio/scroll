@@ -22,113 +22,107 @@
 	void ConsoleLogger::trace(const str8& file, uint32 line, Argument&& argument) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeLogHeader(stream, source, "TRACE", ConsoleEscapeCode::BACKGROUND_COLOR_WHITE, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
+		writeIndented(stream, format("[]\nat []:[]", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 2);
 
-		writeLog(stream, LogLevel::TRACE, format(std::forward<Argument>(argument)), getLogLineWidth());
-		writeIndented(stream, format("at []:[]", file, line), getLogIndentation(), true, getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void ConsoleLogger::trace(const str8& file, uint32 line, const str8& pattern, Argument&&... arguments) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeLogHeader(stream, source, "TRACE", ConsoleEscapeCode::BACKGROUND_COLOR_WHITE, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
+		writeIndented(stream, format("[]\nat []:[]", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 2);
 
-		writeLog(stream, LogLevel::TRACE, format(pattern, std::forward<Argument>(arguments)...), getLogLineWidth());
-		writeIndented(stream, format("at []:[]", file, line), getLogIndentation(), true, getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void ConsoleLogger::debug(Argument&& argument) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_GRAY);
+		writeLogHeader(stream, source, "DEBUG", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_GRAY, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
+		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 2);
 
-		writeLog(stream, LogLevel::DEBUG, format(std::forward<Argument>(argument)), getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void ConsoleLogger::debug(const str8& pattern, Argument&&... arguments) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_GRAY);
+		writeLogHeader(stream, source, "DEBUG", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_GRAY, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
+		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 2);
 
-		writeLog(stream, LogLevel::DEBUG, format(pattern, std::forward<Argument>(arguments)...), getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void ConsoleLogger::info(Argument&& argument) {
 		std::ostream& stream = std::cout;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_BLUE);
+		writeLogHeader(stream, source, "INFO", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_BLUE, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 3);
 
-		writeLog(stream, LogLevel::INFO, format(std::forward<Argument>(argument)), getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void ConsoleLogger::info(const str8& pattern, Argument&&... arguments) {
 		std::ostream& stream = std::cout;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_BLUE);
+		writeLogHeader(stream, source, "INFO", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_BLUE, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 3);
 
-		writeLog(stream, LogLevel::INFO, format(pattern, std::forward<Argument>(arguments)...), getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void ConsoleLogger::warning(Argument&& argument) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_YELLOW);
+		writeLogHeader(stream, source, "WARNING", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_YELLOW, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
+		writeEscapeCodes(ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_YELLOW);
+		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation());
+		writeEscapeCodes(ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
 
-		writeLog(stream, LogLevel::WARNING, format(std::forward<Argument>(argument)), getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void ConsoleLogger::warning(const str8& pattern, Argument&&... arguments) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_YELLOW);
+		writeLogHeader(stream, source, "WARNING", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_YELLOW, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
+		writeEscapeCodes(ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_YELLOW);
+		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation());
+		writeEscapeCodes(ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
 
-		writeLog(stream, LogLevel::WARNING, format(pattern, std::forward<Argument>(arguments)...), getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void ConsoleLogger::error(const str8& function, const str8& file, uint64 line, Argument&& argument) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeLogHeader(stream, source, "ERROR", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeEscapeCodes(ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_RED);
+		writeIndented(stream, format("[]\nat [] ([]:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 2);
+		writeEscapeCodes(ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
 
-		writeLog(stream, LogLevel::ERROR, format(std::forward<Argument>(argument)), getLogLineWidth());
-		writeIndented(stream, format("at [] ([]:[])", function, file, line), getLogIndentation(), true, getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_BACKGROUND_COLOR, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void ConsoleLogger::error(const str8& function, const str8& file, uint64 line, const str8& pattern, Argument&&... arguments) {
 		std::ostream& stream = std::cerr;
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeLogHeader(stream, source, "ERROR", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
+		writeEscapeCodes(ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_RED);
+		writeIndented(stream, format("[]\nat [] ([]:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 2);
+		writeEscapeCodes(ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
 
-		writeLog(stream, LogLevel::ERROR, format(pattern, std::forward<Argument>(arguments)...), getLogLineWidth());
-		writeIndented(stream, format("at [] ([]:[])", function, file, line), getLogIndentation(), true, getLogLineWidth());
-
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_BACKGROUND_COLOR, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+		stream << '\n';
 	}
 }

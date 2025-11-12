@@ -14,8 +14,8 @@ namespace ProjectA {
 			template<typename Argument>
 			static str8 format(Argument&& argument);
 
-			template<typename Argument, typename... PackedArgument>
-			static str8 format(const str8& pattern, Argument&& argument, PackedArgument&&... arguments);
+			template<typename HeadArgument, typename... Argument>
+			static str8 format(const str8& pattern, HeadArgument&& headArgument, Argument&&... arguments);
 
 			static void writeTimestamp(std::ostream& stream);
 
@@ -40,11 +40,6 @@ namespace ProjectA {
 		protected:
 			static str8 argumentInjectionPattern;
 
-			static uint16 maxSourceSize;
-
-		public:
-			static void writePadded(std::ostream& stream, const str8& text, uint64 paddingSize);
-
 		protected:
 			explicit Logger(LogLevel minLogLevel, const str8& source);
 
@@ -53,9 +48,7 @@ namespace ProjectA {
 			static void write(std::ostream& stream, const str8& text);
 
 			// NOTE: `indentation` must not include the size of `text`.
-			static void writeIndented(std::ostream& stream, const str8& text, uint64 indentation, bool indentFirstLine, uint64 maxLineWidth);
-
-			void writeLog(std::ostream& stream, LogLevel level, const str8& message, uint64 maxLineWidth) const;
+			static void writeIndented(std::ostream& stream, const str8& text, uint64 indentation);
 
 		protected:
 			LogLevel minLogLevel;

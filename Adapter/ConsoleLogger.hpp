@@ -17,7 +17,8 @@ namespace ProjectA {
 
 			static uint16 getConsoleWidth();
 
-			uint16 getLogLineWidth() const;
+		private:
+			static void writeLogHeader(std::ostream& stream, const str8& source, const str8& levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor);
 
 		public:
 			explicit ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, const str8& source);
@@ -30,10 +31,10 @@ namespace ProjectA {
 			void writeEscapeCodes(Code&&... codes);
 
 			// TODO: Move into Logger?
-			void print(const str8& string);
+			void write(const str8& text);
 
 			// TODO: Move into Logger?
-			void prefixPrint(const str8& prefix, const str8& string);
+			void prefixPrint(const str8& prefix, const str8& text);
 
 			void title(const str8& text);
 

@@ -9,4 +9,18 @@ namespace ProjectA {
 	{
 		ASSERT(stream.is_open());
 	}
+
+	void FileLogger::writeLogHeader(const str8& levelName) {
+		stream << '[';
+
+		writeTimestamp(stream);
+
+		stream << "] ";
+
+		if (source.count() > 0) {
+			stream << source << ' ';
+		}
+
+		stream << levelName << ' ';
+	}
 }

@@ -3,6 +3,28 @@
 #include "Adapter/ConsoleLogger.hpp"
 
 namespace ProjectA {
+	void ConsoleLogger::writeLogHeader(std::ostream& stream, const str8& source, const str8& levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor) {
+		stream << '[';
+
+		writeStreamEscapeCodes(stream, ConsoleEscapeCode::DIMMED);
+		writeTimestamp(stream);
+		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_BRIGHT);
+
+		stream << "] ";
+
+		if (source.count() > 0) {
+			stream << source << ' ';
+		}
+
+		writeStreamEscapeCodes(stream, levelBackgroundColor, levelForegroundColor);
+
+		stream << ' ' << levelName << ' ';
+
+		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_BACKGROUND_COLOR, ConsoleEscapeCode::RESET_FOREGROUND_COLOR);
+
+		stream << ' ';
+	}
+
 	void ConsoleLogger::writeStreamEscapeCodesInternal(std::ostream& stream, ConsoleEscapeCode code) {
 		stream << static_cast<uint16>(code) << 'm';
 	}
@@ -29,10 +51,6 @@ namespace ProjectA {
 		#endif;
 	}
 
-	uint16 ConsoleLogger::getLogLineWidth() const {
-		return getConsoleWidth() - getLogIndentation();
-	}
-
 	ConsoleLogger::ConsoleLogger(std::ostream& stream, LogLevel minimumLogLevel, const str8& source) :
 		Logger(minimumLogLevel, source),
 		stream(&stream)
@@ -52,18 +70,18 @@ namespace ProjectA {
 		this->stream = &stream;
 	}
 
-	void ConsoleLogger::print(const str8& string) {
-		*stream << string;
+	void ConsoleLogger::write(const str8& text) {
+		*stream << text;
 	}
 
-	void ConsoleLogger::prefixPrint(const str8& prefix, const str8& string) {
+	void ConsoleLogger::prefixPrint(const str8& prefix, const str8& text) {
 		const uint16 consoleWidth = getConsoleWidth() - static_cast<uint16>(prefix.count()) - 1;
 
 		uint64 previousCharacterOffset = 0;
 		uint64 lineCharacterIndex;
 
 		while (true) {
-			const uint64 characterOffset = string.find('\n', previousCharacterOffset);
+			const uint64 characterOffset = text.find('\n', previousCharacterOffset);
 			const uint64 lineWidth = characterOffset - previousCharacterOffset;
 			lineCharacterIndex = 0;
 
@@ -80,7 +98,7 @@ namespace ProjectA {
 				}
 
 				*stream << prefix << ' ';
-				stream->write(&string[previousCharacterOffset + lineCharacterIndex], width);
+				stream->write(&text[previousCharacterOffset + lineCharacterIndex], width);
 				*stream << '\n';
 
 				lineCharacterIndex += width;
@@ -96,7 +114,7 @@ namespace ProjectA {
 				previousCharacterOffset += 1;
 			}
 
-			if (previousCharacterOffset >= string.count()) {
+			if (previousCharacterOffset >= text.count()) {
 				break;
 			}
 		}

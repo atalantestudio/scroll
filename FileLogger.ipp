@@ -1,55 +1,81 @@
 ﻿namespace ProjectA {
 	template<typename Argument>
 	void FileLogger::trace(const str8& file, uint32 line, Argument&& argument) {
-		writeLog(stream, LogLevel::TRACE, format(std::forward<Argument>(argument)), max<uint64>());
-		writeIndented(stream, format("at []:[]", file, line), getLogIndentation(), true, max<uint64>());
+		writeLogHeader("TRACE");
+		writeIndented(stream, format("[]\nat []:[]", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 4);
+
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void FileLogger::trace(const str8& file, uint32 line, const str8& pattern, Argument&&... arguments) {
-		writeLog(stream, LogLevel::TRACE, format(pattern, std::forward<Argument>(arguments)...), max<uint64>());
-		writeIndented(stream, format("at []:[]", file, line), getLogIndentation(), true, max<uint64>());
+		writeLogHeader("TRACE");
+		writeIndented(stream, format("[]\nat []:[]", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 4);
+
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void FileLogger::debug(Argument&& argument) {
-		writeLog(stream, LogLevel::DEBUG, format(std::forward<Argument>(argument)), max<uint64>());
+		writeLogHeader("DEBUG");
+		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 4);
+
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void FileLogger::debug(const str8& pattern, Argument&&... arguments) {
-		writeLog(stream, LogLevel::DEBUG, format(pattern, std::forward<Argument>(arguments)...), max<uint64>());
+		writeLogHeader("DEBUG");
+		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 4);
+
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void FileLogger::info(Argument&& argument) {
-		writeLog(stream, LogLevel::INFO, format(std::forward<Argument>(argument)), max<uint64>());
+		writeLogHeader("INFO");
+		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 5);
+
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void FileLogger::info(const str8& pattern, Argument&&... arguments) {
-		writeLog(stream, LogLevel::INFO, format(pattern, std::forward<Argument>(arguments)...), max<uint64>());
+		writeLogHeader("INFO");
+		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 5);
+
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void FileLogger::warning(Argument&& argument) {
-		writeLog(stream, LogLevel::WARNING, format(std::forward<Argument>(argument)), max<uint64>());
+		writeLogHeader("WARNING");
+		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 2);
+
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void FileLogger::warning(const str8& pattern, Argument&&... arguments) {
-		writeLog(stream, LogLevel::WARNING, format(pattern, std::forward<Argument>(arguments)...), max<uint64>());
+		writeLogHeader("WARNING");
+		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 2);
+
+		stream << '\n';
 	}
 
 	template<typename Argument>
 	void FileLogger::error(const str8& function, const str8& file, uint64 line, Argument&& argument) {
-		writeLog(stream, LogLevel::ERROR, format(std::forward<Argument>(argument)), max<uint64>());
-		writeIndented(stream, format("at [] ([]:[])", function, file, line), getLogIndentation(), true, max<uint64>());
+		writeLogHeader("ERROR");
+		writeIndented(stream, format("[]\nat [] ([]:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 4);
+
+		stream << '\n';
 	}
 
 	template<typename... Argument>
 	void FileLogger::error(const str8& function, const str8& file, uint64 line, const str8& pattern, Argument&&... arguments) {
-		writeLog(stream, LogLevel::ERROR, format(pattern, std::forward<Argument>(arguments)...), max<uint64>());
-		writeIndented(stream, format("at [] ([]:[])", function, file, line), getLogIndentation(), true, max<uint64>());
+		writeLogHeader("ERROR");
+		writeIndented(stream, format("[]\nat [] ([]:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 4);
+
+		stream << '\n';
 	}
 }

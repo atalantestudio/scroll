@@ -39,6 +39,9 @@ namespace ProjectA {
 			void error(const str8& function, const str8& file, uint64 line, const str8& pattern, Argument&&... arguments);
 
 		private:
+			void writeLogHeader(const str8& levelName);
+
+		public:
 			std::ofstream& stream;
 	};
 }

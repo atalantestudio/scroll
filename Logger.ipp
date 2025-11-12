@@ -11,15 +11,15 @@ namespace ProjectA {
 		return stream.str();
 	}
 
-	template<typename Argument, typename... PackedArgument>
-	str8 Logger::format(const str8& pattern, Argument&& argument, PackedArgument&&... arguments) {
+	template<typename HeadArgument, typename... Argument>
+	str8 Logger::format(const str8& pattern, HeadArgument&& headArgument, Argument&&... arguments) {
 		const uint64 argumentInjectionPatternOffset = pattern.find(argumentInjectionPattern, 0);
 
 		if (argumentInjectionPatternOffset >= pattern.count()) {
 			return pattern;
 		}
 
-		const str8 formattedArgument = format(argument);
+		const str8 formattedArgument = format(headArgument);
 
 		str8 updatedPattern(pattern.count() - argumentInjectionPattern.count() + formattedArgument.count());
 
@@ -30,6 +30,6 @@ namespace ProjectA {
 			std::copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.count()]);
 		}
 
-		return format(updatedPattern, std::forward<PackedArgument>(arguments)...);
+		return format(updatedPattern, std::forward<Argument>(arguments)...);
 	}
 }
