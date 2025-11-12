@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Logger.hpp"
+#include "base.hpp"
+#include "Logger/Logger.hpp"
 #include "LogLevel.hpp"
 
 namespace ProjectA {

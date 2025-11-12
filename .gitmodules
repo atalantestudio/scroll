@@ -1,4 +1,4 @@
 [submodule "Base"]
 	path = Base
-	url = git@github.com:atalantestudio/ProjectAModuleBase
+	url = git@github.com:atalantestudio/ModuleBase
 	branch = main
