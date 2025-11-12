@@ -1,12 +1,16 @@
 ﻿namespace ProjectA {
 	inline void ConsoleLogger::writeLogHeader(std::ostream& stream, const str8& source, const str8& levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor) {
+		writeStreamEscapeCodes(stream, ConsoleEscapeCode::DIMMED);
+
 		stream << '[';
 
-		writeStreamEscapeCodes(stream, ConsoleEscapeCode::DIMMED);
 		writeTimestamp(stream);
+
+		stream << ']';
+
 		writeStreamEscapeCodes(stream, ConsoleEscapeCode::RESET_BRIGHT);
 
-		stream << "] ";
+		stream << ' ';
 
 		if (source.count() > 0) {
 			stream << source << ' ';
