@@ -20,22 +20,8 @@ namespace ProjectA {
 			static void writeTimestamp(std::ostream& stream);
 
 		protected:
-			static inline constexpr const char8* LOG_LEVEL_NAMES[] = {
-				"",
-				"TRACE",
-				"DEBUG",
-				"INFO",
-				"WARNING",
-				"ERROR",
-				"",
-			};
-
 			static constexpr std::streamsize TIMESTAMP_SIZE = 14;
-
-			// The longest name in `LOG_LEVEL_NAMES`.
 			static constexpr std::streamsize MAX_LOG_LEVEL_NAME_SIZE = 7;
-
-			static constexpr uint64 LOG_INDENT = TIMESTAMP_SIZE + MAX_LOG_LEVEL_NAME_SIZE + 4;
 
 		protected:
 			static str8 argumentInjectionPattern;
