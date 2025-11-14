@@ -1,13 +1,5 @@
 #pragma once
 
-// NOTE: Avoid confict with macros defined in Windows.h.
-#undef FOREGROUND_RED
-#undef FOREGROUND_GREEN
-#undef FOREGROUND_BLUE
-#undef BACKGROUND_RED
-#undef BACKGROUND_GREEN
-#undef BACKGROUND_BLUE
-
 namespace ProjectA {
 	// See https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters.
 	enum class ConsoleEscapeCode : char8 {
