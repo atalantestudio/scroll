@@ -56,10 +56,15 @@
 
 		localtime_s(&dateTime, &time);
 
+		// NOTE: std::strftime writes the null-terminating character.
+		sequence<char8> hmsString(9);
+
+		ASSERT(std::strftime(&hmsString[0], hmsString.count(), "%T", &dateTime) > 0);
+
 		std::ostringstream msStream;
 		msStream << std::setw(3) << std::setfill('0') << ms;
 
-		return format("[]:[]:[].[]", dateTime.tm_hour, dateTime.tm_min, dateTime.tm_sec, msStream.str());
+		return format("[].[]", hmsString, msStream.str());
 	}
 
 	inline Logger::Logger(LogLevel minLogLevel, view<char8> source) :

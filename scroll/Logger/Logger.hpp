@@ -20,9 +20,6 @@ namespace USER_NAMESPACE {
 
 			static sequence<char8> timestamp();
 
-			// TODO
-			Logger& operator <<(ConsoleEscapeCode code);
-
 		protected:
 			static constexpr uint64 TIMESTAMP_SIZE = 14;
 			static constexpr uint64 MAX_LOG_LEVEL_NAME_SIZE = 7;
