@@ -1,29 +1,31 @@
 #pragma once
 
-// NOTE: Avoid confict with macro defined in Windows.h.
-#undef ERROR
+#if OPERATING_SYSTEM == OPERATING_SYSTEM_WINDOWS
+	// NOTE: Avoid confict with macro defined in Windows.h.
+	#undef ERROR
+#endif
 
 namespace ProjectA {
 	enum class LogLevel : uint8 {
-		// Enables all logs.
+		// Enable all logs (alias for TRACE).
 		ALL,
 
-		// Enables logs with a level inferior than or equal to TRACE.
+		// Enable logs with a level greater than or equal to TRACE.
 		TRACE,
 
-		// Enables logs with a level inferior than or equal to DEBUG.
+		// Enable logs with a level greater than or equal to DEBUG.
 		DEBUG,
 
-		// Enables logs with a level inferior than or equal to INFO.
+		// Enable logs with a level greater than or equal to INFO.
 		INFO,
 
-		// Enables logs with a level inferior than or equal to WARNING.
+		// Enable logs with a level greater than or equal to WARNING.
 		WARNING,
 
-		// Enables logs with a level inferior than or equal to ERROR.
+		// Enable logs with a level greater than or equal to ERROR.
 		ERROR,
 
-		// Disables all logs.
+		// Disable all logs (alias for ERROR).
 		NONE,
 	};
 }
