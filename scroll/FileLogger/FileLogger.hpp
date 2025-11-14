@@ -1,46 +1,46 @@
-#pragma once
+﻿#pragma once
 
 #include "base.hpp"
 #include "Logger/Logger.hpp"
 #include "LogLevel.hpp"
 
-namespace ProjectA {
+namespace USER_NAMESPACE {
 	class FileLogger : public Logger {
 		public:
-			explicit FileLogger(std::ofstream& stream, LogLevel minLogLevel, const str8& source);
+			explicit FileLogger(std::ofstream& stream, LogLevel minLogLevel, view<char8> source);
 
 			template<typename Argument>
-			void trace(const str8& file, uint32 line, Argument&& argument);
+			void trace(view<char8> file, uint32 line, Argument&& argument);
 
 			template<typename... Argument>
-			void trace(const str8& file, uint32 line, const str8& pattern, Argument&&... arguments);
+			void trace(view<char8> file, uint32 line, view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void debug(Argument&& argument);
 
 			template<typename... Argument>
-			void debug(const str8& pattern, Argument&&... arguments);
+			void debug(view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void info(Argument&& argument);
 
 			template<typename... Argument>
-			void info(const str8& pattern, Argument&&... arguments);
+			void info(view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void warning(Argument&& argument);
 
 			template<typename... Argument>
-			void warning(const str8& pattern, Argument&&... arguments);
+			void warning(view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
-			void error(const str8& function, const str8& file, uint64 line, Argument&& argument);
+			void error(view<char8> function, view<char8> file, uint64 line, Argument&& argument);
 
 			template<typename... Argument>
-			void error(const str8& function, const str8& file, uint64 line, const str8& pattern, Argument&&... arguments);
+			void error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
 		private:
-			void writeLogHeader(const str8& levelName);
+			void writeLogHeader(view<char8> levelName);
 
 		public:
 			std::ofstream& stream;

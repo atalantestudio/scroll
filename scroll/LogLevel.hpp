@@ -5,7 +5,7 @@
 	#undef ERROR
 #endif
 
-namespace ProjectA {
+namespace USER_NAMESPACE {
 	enum class LogLevel : uint8 {
 		// Enable all logs (alias for TRACE).
 		ALL,

@@ -3,43 +3,46 @@
 #include "base.hpp"
 #include "LogLevel.hpp"
 
-namespace ProjectA {
+namespace USER_NAMESPACE {
 	class Logger {
 		public:
 			// Returns the current argument injection pattern.
-			static const str8& getArgumentInjectionPattern();
+			static sequence<char8> getArgumentInjectionPattern();
 
 			// Replaces the current argument injection pattern.
-			static void setArgumentInjectionPattern(const str8& pattern);
+			static void setArgumentInjectionPattern(view<char8> pattern);
 
 			template<typename Argument>
-			static str8 format(Argument&& argument);
+			static sequence<char8> format(Argument&& argument);
 
 			template<typename HeadArgument, typename... Argument>
-			static str8 format(const str8& pattern, HeadArgument&& headArgument, Argument&&... arguments);
+			static sequence<char8> format(view<char8> pattern, HeadArgument&& headArgument, Argument&&... arguments);
 
-			static void writeTimestamp(std::ostream& stream);
+			static sequence<char8> timestamp();
 
-		protected:
-			static constexpr std::streamsize TIMESTAMP_SIZE = 14;
-			static constexpr std::streamsize MAX_LOG_LEVEL_NAME_SIZE = 7;
-
-		protected:
-			static str8 argumentInjectionPattern;
+			// TODO
+			Logger& operator <<(ConsoleEscapeCode code);
 
 		protected:
-			explicit Logger(LogLevel minLogLevel, const str8& source);
+			static constexpr uint64 TIMESTAMP_SIZE = 14;
+			static constexpr uint64 MAX_LOG_LEVEL_NAME_SIZE = 7;
+
+		private:
+			static sequence<char8> argumentInjectionPattern;
+
+		protected:
+			explicit Logger(LogLevel minLogLevel, view<char8> source);
 
 			uint16 getLogIndentation() const;
 
-			static void write(std::ostream& stream, const str8& text);
+			static void write(std::ostream& stream, view<char8> text);
 
 			// NOTE: `indentation` must not include the size of `text`.
-			static void writeIndented(std::ostream& stream, const str8& text, uint64 indentation);
+			static void writeIndented(std::ostream& stream, view<char8> text, uint64 indentation);
 
 		protected:
 			LogLevel minLogLevel;
-			str8 source;
+			sequence<char8> source;
 	};
 }
 

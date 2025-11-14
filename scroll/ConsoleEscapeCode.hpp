@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ProjectA {
+namespace USER_NAMESPACE {
 	// See https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters.
 	enum class ConsoleEscapeCode : char8 {
 		// All attributes become turned off.

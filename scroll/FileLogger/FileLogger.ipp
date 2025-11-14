@@ -1,5 +1,5 @@
-﻿namespace ProjectA {
-	inline FileLogger::FileLogger(std::ofstream& stream, LogLevel minLogLevel, const str8& source) :
+﻿namespace USER_NAMESPACE {
+	inline FileLogger::FileLogger(std::ofstream& stream, LogLevel minLogLevel, view<char8> source) :
 		Logger(minLogLevel, source),
 		stream(stream)
 	{
@@ -7,7 +7,7 @@
 	}
 
 	template<typename Argument>
-	void FileLogger::trace(const str8& file, uint32 line, Argument&& argument) {
+	void FileLogger::trace(view<char8> file, uint32 line, Argument&& argument) {
 		writeLogHeader("TRACE");
 		writeIndented(stream, format("[]\nat []:[]", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 4);
 
@@ -15,7 +15,7 @@
 	}
 
 	template<typename... Argument>
-	void FileLogger::trace(const str8& file, uint32 line, const str8& pattern, Argument&&... arguments) {
+	void FileLogger::trace(view<char8> file, uint32 line, view<char8> pattern, Argument&&... arguments) {
 		writeLogHeader("TRACE");
 		writeIndented(stream, format("[]\nat []:[]", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 4);
 
@@ -31,7 +31,7 @@
 	}
 
 	template<typename... Argument>
-	void FileLogger::debug(const str8& pattern, Argument&&... arguments) {
+	void FileLogger::debug(view<char8> pattern, Argument&&... arguments) {
 		writeLogHeader("DEBUG");
 		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 4);
 
@@ -47,7 +47,7 @@
 	}
 
 	template<typename... Argument>
-	void FileLogger::info(const str8& pattern, Argument&&... arguments) {
+	void FileLogger::info(view<char8> pattern, Argument&&... arguments) {
 		writeLogHeader("INFO");
 		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 5);
 
@@ -63,7 +63,7 @@
 	}
 
 	template<typename... Argument>
-	void FileLogger::warning(const str8& pattern, Argument&&... arguments) {
+	void FileLogger::warning(view<char8> pattern, Argument&&... arguments) {
 		writeLogHeader("WARNING");
 		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 2);
 
@@ -71,7 +71,7 @@
 	}
 
 	template<typename Argument>
-	void FileLogger::error(const str8& function, const str8& file, uint64 line, Argument&& argument) {
+	void FileLogger::error(view<char8> function, view<char8> file, uint64 line, Argument&& argument) {
 		writeLogHeader("ERROR");
 		writeIndented(stream, format("[]\nat [] ([]:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 4);
 
@@ -79,19 +79,15 @@
 	}
 
 	template<typename... Argument>
-	void FileLogger::error(const str8& function, const str8& file, uint64 line, const str8& pattern, Argument&&... arguments) {
+	void FileLogger::error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments) {
 		writeLogHeader("ERROR");
 		writeIndented(stream, format("[]\nat [] ([]:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 4);
 
 		stream << '\n';
 	}
 
-	inline void FileLogger::writeLogHeader(const str8& levelName) {
-		stream << '[';
-
-		writeTimestamp(stream);
-
-		stream << "] ";
+	inline void FileLogger::writeLogHeader(view<char8> levelName) {
+		stream << '[' << timestamp() << "] ";
 
 		if (source.count() > 0) {
 			stream << source << ' ';

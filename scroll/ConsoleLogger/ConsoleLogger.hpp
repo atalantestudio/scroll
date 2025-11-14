@@ -5,7 +5,7 @@
 #include "Logger/Logger.hpp"
 #include "LogLevel.hpp"
 
-namespace ProjectA {
+namespace USER_NAMESPACE {
 	class ConsoleLogger : public Logger {
 		private:
 			template<typename... Argument>
@@ -16,13 +16,11 @@ namespace ProjectA {
 
 			static void writeStreamEscapeCodesInternal(std::ostream& stream, ConsoleEscapeCode code);
 
-			static uint16 getConsoleWidth();
-
 		private:
-			static void writeLogHeader(std::ostream& stream, const str8& source, const str8& levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor);
+			static void writeLogHeader(std::ostream& stream, view<char8> source, view<char8> levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor);
 
 		public:
-			explicit ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, const str8& source);
+			explicit ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, view<char8> source);
 
 			std::ostream& getOutputStream();
 
@@ -32,49 +30,44 @@ namespace ProjectA {
 			void writeEscapeCodes(Code&&... codes);
 
 			// TODO: Move into Logger?
-			void write(const str8& text);
+			void write(view<char8> text);
 
-			// TODO: Move into Logger?
-			void prefixPrint(const str8& prefix, const str8& text);
+			void title(view<char8> text);
 
-			void title(const str8& text);
+			void writeLink(view<char8> url);
+			void writeLink(view<char8> url, view<char8> placeholder);
 
-			void comment(const str8& text);
-
-			void writeLink(const str8& url);
-			void writeLink(const str8& url, const str8& placeholder);
-
-			void listItem(const str8& text);
+			void listItem(view<char8> text);
 
 			template<typename Argument>
-			void trace(const str8& file, uint32 line, Argument&& argument);
+			void trace(view<char8> file, uint32 line, Argument&& argument);
 
 			template<typename... Argument>
-			void trace(const str8& file, uint32 line, const str8& pattern, Argument&&... arguments);
+			void trace(view<char8> file, uint32 line, view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void debug(Argument&& argument);
 
 			template<typename... Argument>
-			void debug(const str8& pattern, Argument&&... arguments);
+			void debug(view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void info(Argument&& argument);
 
 			template<typename... Argument>
-			void info(const str8& pattern, Argument&&... arguments);
+			void info(view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void warning(Argument&& argument);
 
 			template<typename... Argument>
-			void warning(const str8& pattern, Argument&&... arguments);
+			void warning(view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
-			void error(const str8& function, const str8& file, uint64 line, Argument&& argument);
+			void error(view<char8> function, view<char8> file, uint64 line, Argument&& argument);
 
 			template<typename... Argument>
-			void error(const str8& function, const str8& file, uint64 line, const str8& pattern, Argument&&... arguments);
+			void error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
 		private:
 			std::ostream* stream;
