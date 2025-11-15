@@ -15,5 +15,3 @@
 	#include <sys/ioctl.h>
 	#include <unistd.h>
 #endif
-
-#include "str8.hpp"
