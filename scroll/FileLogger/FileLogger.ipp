@@ -1,4 +1,7 @@
-﻿namespace USER_NAMESPACE {
+﻿// Copyright 2025 Atalante.
+// Licensed under MIT.
+
+namespace USER_NAMESPACE {
 	inline FileLogger::FileLogger(std::ofstream& stream, LogLevel minLogLevel, view<char8> source) :
 		Logger(minLogLevel, source),
 		stream(stream)

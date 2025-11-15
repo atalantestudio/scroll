@@ -1,3 +1,6 @@
+// Copyright 2025 Atalante.
+// Licensed under MIT.
+
 namespace USER_NAMESPACE {
 	inline std::ostream& operator<<(std::ostream& stream, view<char8> view) {
 		return stream.write(&view[0], view.count());
