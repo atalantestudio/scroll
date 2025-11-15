@@ -1,9 +1,4 @@
 ﻿namespace USER_NAMESPACE {
-	// TODO: Try to remove.
-	inline std::ostream& operator <<(std::ostream& stream, view<char8> value) {
-		return stream.write(&value[0], value.count());
-	}
-
 	template<typename Argument>
 	sequence<char8> Logger::format(Argument&& argument) {
 		std::ostringstream stream;
@@ -67,6 +62,14 @@
 		return format("[].[]", hmsString, msStream.str());
 	}
 
+	inline LogLevel Logger::getMinLogLevel() const {
+		return minLogLevel;
+	}
+
+	inline view<char8> Logger::getSource() const {
+		return source;
+	}
+
 	inline Logger::Logger(LogLevel minLogLevel, view<char8> source) :
 		minLogLevel(minLogLevel),
 		source(source)
@@ -80,10 +83,6 @@
 		}
 
 		return indentation;
-	}
-
-	inline void Logger::write(std::ostream& stream, view<char8> text) {
-		stream << text;
 	}
 
 	inline void Logger::writeIndented(std::ostream& stream, view<char8> text, uint64 indentation) {

@@ -21,25 +21,27 @@ namespace USER_NAMESPACE {
 			static sequence<char8> timestamp();
 
 		protected:
+			static sequence<char8> argumentInjectionPattern;
+
 			static constexpr uint64 TIMESTAMP_SIZE = 14;
 			static constexpr uint64 MAX_LOG_LEVEL_NAME_SIZE = 7;
 
-		private:
-			static sequence<char8> argumentInjectionPattern;
+		public:
+			LogLevel getMinLogLevel() const;
+
+			view<char8> getSource() const;
 
 		protected:
 			explicit Logger(LogLevel minLogLevel, view<char8> source);
 
 			uint16 getLogIndentation() const;
 
-			static void write(std::ostream& stream, view<char8> text);
-
-			// NOTE: `indentation` must not include the size of `text`.
+			// NOTE: `indentation` must **not** include the size of `text`.
 			static void writeIndented(std::ostream& stream, view<char8> text, uint64 indentation);
 
 		protected:
 			LogLevel minLogLevel;
-			sequence<char8> source;
+			view<char8> source;
 	};
 }
 
