@@ -1,3 +1,6 @@
+// Copyright 2025 Atalante.
+// Licensed under MIT.
+
 #pragma once
 
 namespace USER_NAMESPACE {

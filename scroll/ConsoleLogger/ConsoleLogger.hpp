@@ -1,4 +1,7 @@
-﻿#pragma once
+﻿// Copyright 2025 Atalante.
+// Licensed under MIT.
+
+#pragma once
 
 #include "base.hpp"
 #include "ConsoleEscapeCode.hpp"

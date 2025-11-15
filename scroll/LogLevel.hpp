@@ -1,3 +1,6 @@
+// Copyright 2025 Atalante.
+// Licensed under MIT.
+
 #pragma once
 
 #if OPERATING_SYSTEM == OPERATING_SYSTEM_WINDOWS
