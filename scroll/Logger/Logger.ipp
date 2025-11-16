@@ -35,7 +35,7 @@ namespace USER_NAMESPACE {
 
 	inline sequence<char8> Logger::argumentInjectionPattern = "[]";
 
-	inline sequence<char8> Logger::getArgumentInjectionPattern() {
+	inline view<char8> Logger::getArgumentInjectionPattern() {
 		return argumentInjectionPattern;
 	}
 

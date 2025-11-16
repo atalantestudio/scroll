@@ -10,7 +10,7 @@ namespace USER_NAMESPACE {
 	class Logger {
 		public:
 			// Returns the current argument injection pattern.
-			static sequence<char8> getArgumentInjectionPattern();
+			static view<char8> getArgumentInjectionPattern();
 
 			// Replaces the current argument injection pattern.
 			static void setArgumentInjectionPattern(view<char8> pattern);
