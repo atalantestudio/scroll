@@ -73,14 +73,6 @@ namespace USER_NAMESPACE {
 		return *this;
 	}
 
-	inline void ConsoleLogger::writeLink(view<char8> url) {
-		writeLink(url, url);
-	}
-
-	inline void ConsoleLogger::writeLink(view<char8> url, view<char8> placeholder) {
-		*stream << ConsoleEscapeCode::FOREGROUND_COLOR_CYAN << "\033]8;;" << url << "\033\\" << placeholder << "\033]8;;\033\\" << ConsoleEscapeCode::RESET_FOREGROUND_COLOR;
-	}
-
 	template<typename Argument>
 	void ConsoleLogger::trace(view<char8> file, uint32 line, Argument&& argument) {
 		if (LogLevel::TRACE < minLogLevel) {

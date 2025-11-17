@@ -32,9 +32,6 @@ namespace USER_NAMESPACE {
 
 			ConsoleLogger& padRight(uint64 padding);
 
-			void writeLink(view<char8> url);
-			void writeLink(view<char8> url, view<char8> placeholder);
-
 			template<typename Argument>
 			void trace(view<char8> file, uint32 line, Argument&& argument);
 
