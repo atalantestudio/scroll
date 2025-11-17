@@ -83,6 +83,10 @@ namespace USER_NAMESPACE {
 
 	template<typename Argument>
 	void ConsoleLogger::trace(view<char8> file, uint32 line, Argument&& argument) {
+		if (LogLevel::TRACE < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "TRACE", ConsoleEscapeCode::BACKGROUND_COLOR_WHITE, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
@@ -93,6 +97,10 @@ namespace USER_NAMESPACE {
 
 	template<typename... Argument>
 	void ConsoleLogger::trace(view<char8> file, uint32 line, view<char8> pattern, Argument&&... arguments) {
+		if (LogLevel::TRACE < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "TRACE", ConsoleEscapeCode::BACKGROUND_COLOR_WHITE, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
@@ -103,6 +111,10 @@ namespace USER_NAMESPACE {
 
 	template<typename Argument>
 	void ConsoleLogger::debug(Argument&& argument) {
+		if (LogLevel::DEBUG < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "DEBUG", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_GRAY, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
@@ -113,6 +125,10 @@ namespace USER_NAMESPACE {
 
 	template<typename... Argument>
 	void ConsoleLogger::debug(view<char8> pattern, Argument&&... arguments) {
+		if (LogLevel::DEBUG < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "DEBUG", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_GRAY, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
@@ -123,6 +139,10 @@ namespace USER_NAMESPACE {
 
 	template<typename Argument>
 	void ConsoleLogger::info(Argument&& argument) {
+		if (LogLevel::INFO < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cout;
 
 		writeLogHeader(stream, source, "INFO", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_BLUE, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
@@ -133,6 +153,10 @@ namespace USER_NAMESPACE {
 
 	template<typename... Argument>
 	void ConsoleLogger::info(view<char8> pattern, Argument&&... arguments) {
+		if (LogLevel::INFO < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cout;
 
 		writeLogHeader(stream, source, "INFO", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_BLUE, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
@@ -143,6 +167,10 @@ namespace USER_NAMESPACE {
 
 	template<typename Argument>
 	void ConsoleLogger::warning(Argument&& argument) {
+		if (LogLevel::WARNING < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "WARNING", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_YELLOW, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
@@ -153,6 +181,10 @@ namespace USER_NAMESPACE {
 
 	template<typename... Argument>
 	void ConsoleLogger::warning(view<char8> pattern, Argument&&... arguments) {
+		if (LogLevel::WARNING < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "WARNING", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_YELLOW, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
@@ -163,6 +195,10 @@ namespace USER_NAMESPACE {
 
 	template<typename Argument>
 	void ConsoleLogger::error(view<char8> function, view<char8> file, uint64 line, Argument&& argument) {
+		if (LogLevel::ERROR < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "ERROR", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
@@ -173,6 +209,10 @@ namespace USER_NAMESPACE {
 
 	template<typename... Argument>
 	void ConsoleLogger::error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments) {
+		if (LogLevel::ERROR < minLogLevel) {
+			return;
+		}
+
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "ERROR", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
