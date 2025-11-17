@@ -24,6 +24,10 @@ namespace USER_NAMESPACE {
 			static sequence<char8> timestamp();
 
 		protected:
+			// NOTE: `indentation` must **not** include the size of `text`.
+			static void writeIndented(std::ostream& stream, view<char8> text, uint64 indentation);
+
+		private:
 			static sequence<char8> argumentInjectionPattern;
 
 			static constexpr uint64 TIMESTAMP_SIZE = 14;
@@ -38,9 +42,6 @@ namespace USER_NAMESPACE {
 			explicit Logger(LogLevel minLogLevel, view<char8> source);
 
 			uint16 getLogIndentation() const;
-
-			// NOTE: `indentation` must **not** include the size of `text`.
-			static void writeIndented(std::ostream& stream, view<char8> text, uint64 indentation);
 
 		protected:
 			LogLevel minLogLevel;

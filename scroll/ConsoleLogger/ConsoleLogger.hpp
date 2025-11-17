@@ -26,7 +26,7 @@ namespace USER_NAMESPACE {
 			ConsoleLogger& operator<<(Argument&& argument);
 
 			template<>
-			ConsoleLogger& operator<<(ConsoleEscapeCode&& code);
+			ConsoleLogger& operator<<(ConsoleEscapeCode&& argument);
 
 			ConsoleLogger& padLeft(uint64 padding);
 

@@ -46,7 +46,7 @@ namespace USER_NAMESPACE {
 	}
 
 	template<>
-	ConsoleLogger& ConsoleLogger::operator<<(ConsoleEscapeCode&& code) {
+	ConsoleLogger& ConsoleLogger::operator<<(ConsoleEscapeCode&& argument) {
 		if (!writingEscapeCodes) {
 			writingEscapeCodes = true;
 
@@ -56,7 +56,7 @@ namespace USER_NAMESPACE {
 			stream->write(";", 1);
 		}
 
-		*stream << static_cast<uint16>(code);
+		*stream << static_cast<uint16>(argument);
 
 		return *this;
 	}

@@ -79,7 +79,7 @@ namespace USER_NAMESPACE {
 	{}
 
 	inline uint16 Logger::getLogIndentation() const {
-		uint16 indentation = static_cast<uint16>(14 + 1 + 9 + 1);
+		uint16 indentation = static_cast<uint16>(TIMESTAMP_SIZE + MAX_LOG_LEVEL_NAME_SIZE + 4);
 
 		if (source.count() > 0) {
 			indentation += static_cast<uint16>(source.count()) + 1;
