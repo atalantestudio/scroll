@@ -6,6 +6,7 @@
 #include <chrono>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 #ifndef USER_NAMESPACE
@@ -13,8 +14,3 @@
 #endif
 
 #include "Base/Base/Base.hpp"
-
-#if OPERATING_SYSTEM == OPERATING_SYSTEM_LINUX
-	#include <sys/ioctl.h>
-	#include <unistd.h>
-#endif
