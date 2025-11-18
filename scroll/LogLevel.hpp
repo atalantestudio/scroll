@@ -3,7 +3,7 @@
 
 #pragma once
 
-#if OPERATING_SYSTEM == OPERATING_SYSTEM_WINDOWS
+#ifdef ERROR
 	// NOTE: Avoid confict with macro defined in Windows.h.
 	#undef ERROR
 #endif
