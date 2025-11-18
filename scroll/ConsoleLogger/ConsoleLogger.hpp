@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base.hpp"
 #include "ConsoleEscapeCode.hpp"
 #include "Logger/Logger.hpp"
 #include "LogLevel.hpp"

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base.hpp"
 #include "LogLevel.hpp"
 
 namespace USER_NAMESPACE {

@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "base.hpp"
+
 #include "Conversions.hpp"
 
 #include "ConsoleLogger/ConsoleLogger.hpp"
