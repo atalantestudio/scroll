@@ -6,7 +6,7 @@
 #include "Logger/Logger.hpp"
 #include "LogLevel.hpp"
 
-namespace USER_NAMESPACE {
+namespace scroll {
 	class FileLogger : public Logger {
 		public:
 			explicit FileLogger(std::ofstream& stream, LogLevel minLogLevel, view<char8> source);

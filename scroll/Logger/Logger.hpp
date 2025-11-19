@@ -5,7 +5,7 @@
 
 #include "LogLevel.hpp"
 
-namespace USER_NAMESPACE {
+namespace scroll {
 	class Logger {
 		public:
 			// Returns the current argument injection pattern.

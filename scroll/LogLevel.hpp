@@ -8,7 +8,7 @@
 	#undef ERROR
 #endif
 
-namespace USER_NAMESPACE {
+namespace scroll {
 	enum class LogLevel : uint8 {
 		// Enable all logs (alias for TRACE).
 		ALL,
