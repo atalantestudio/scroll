@@ -1,7 +1,7 @@
 ﻿// Copyright 2025 Atalante.
 // Licensed under MIT.
 
-namespace USER_NAMESPACE {
+namespace scroll {
 	template<typename Argument>
 	sequence<char8> Logger::format(Argument&& argument) {
 		std::ostringstream stream;

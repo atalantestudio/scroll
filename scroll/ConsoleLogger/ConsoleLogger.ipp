@@ -1,7 +1,7 @@
 ﻿// Copyright 2025 Atalante.
 // Licensed under MIT.
 
-namespace USER_NAMESPACE {
+namespace scroll {
 	inline void ConsoleLogger::writeLogHeader(std::ostream& stream, view<char8> source, view<char8> levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor) {
 		stream << "\033[" << ConsoleEscapeCode::DIMMED << "m[" << timestamp() << "]\033[" << ConsoleEscapeCode::RESET_BRIGHT << "m ";
 

@@ -9,8 +9,18 @@
 #include <iostream>
 #include <sstream>
 
-#ifndef USER_NAMESPACE
-	#define USER_NAMESPACE scroll
+#ifndef ATL_MODULE_BASE
+	#include "Base/Base/Base.hpp"
 #endif
 
-#include "Base/Base/Base.hpp"
+namespace scroll {
+	using atl::uint8;
+	using atl::uint16;
+	using atl::uint32;
+	using atl::uint64;
+
+	using atl::char8;
+
+	using atl::sequence;
+	using atl::view;
+}

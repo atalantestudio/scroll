@@ -7,7 +7,7 @@
 #include "Logger/Logger.hpp"
 #include "LogLevel.hpp"
 
-namespace USER_NAMESPACE {
+namespace scroll {
 	class ConsoleLogger : public Logger {
 		private:
 			static void writeLogHeader(std::ostream& stream, view<char8> source, view<char8> levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor);
