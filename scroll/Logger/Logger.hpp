@@ -32,7 +32,7 @@ namespace scroll {
 			static void writeIndented(std::ostream& stream, view<char8> text, uint64 indentation);
 
 		private:
-			static constexpr uint64 TIMESTAMP_SIZE = 14;
+			static constexpr uint64 TIMESTAMP_SIZE = 15;
 			static constexpr uint64 MAX_LOG_LEVEL_NAME_SIZE = 7;
 
 		public:
