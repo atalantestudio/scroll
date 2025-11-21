@@ -51,15 +51,24 @@ namespace scroll {
 		const uint64 ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - std::chrono::time_point_cast<std::chrono::seconds>(now)).count();
 		const std::time_t time = std::chrono::system_clock::to_time_t(now);
 
-		std::tm dateTime;
+		std::tm* dateTime;
 
-		localtime_s(&dateTime, &time);
+		#ifdef _MSC_VER
+			std::tm _dateTime{};
 
-		// NOTE: std::strftime writes the null-terminating character.
+			ATL_ASSERT(!localtime_s(&_dateTime, &time));
+
+			dateTime = &_dateTime;
+		#else
+			dateTime = std::localtime(&time);
+		#endif
+
+		// Include null-terminating character.
 		sequence<char8> hmsString(9);
 
-		ATL_ASSERT(std::strftime(&hmsString[0], hmsString.count(), "%T", &dateTime) > 0);
+		ATL_ASSERT(std::strftime(&hmsString[0], hmsString.count(), "%H:%M:%S", dateTime) > 0);
 
+		// TODO: Reuse the stream.
 		std::ostringstream msStream;
 		msStream << std::setw(3) << std::setfill('0') << ms;
 
