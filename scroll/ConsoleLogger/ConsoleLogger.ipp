@@ -14,9 +14,10 @@ namespace scroll {
 	}
 
 	inline ConsoleLogger::ConsoleLogger(std::ostream& stream, LogLevel minimumLogLevel, view<char8> source) :
-		Logger(minimumLogLevel, source),
-		stream(&stream)
-	{}
+		Logger(minimumLogLevel, source)
+	{
+		setOutputStream(stream);
+	}
 
 	inline ConsoleLogger::~ConsoleLogger() {
 		if (writingEscapeCodes) {
@@ -30,6 +31,13 @@ namespace scroll {
 
 	inline void ConsoleLogger::setOutputStream(std::ostream& stream) {
 		this->stream = &stream;
+
+		#if ATL_OPERATING_SYSTEM == ATL_OPERATING_SYSTEM_WINDOWS
+			const HANDLE hConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+			ATL_ASSERT(hConsoleHandle != NULL && hConsoleHandle != INVALID_HANDLE_VALUE);
+			ATL_ASSERT(SetConsoleMode(hConsoleHandle, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING) > 0);
+		#endif
 	}
 
 	template<typename Argument>
@@ -82,7 +90,7 @@ namespace scroll {
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "TRACE", ConsoleEscapeCode::BACKGROUND_COLOR_WHITE, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
-		writeIndented(stream, format("[]\nat []:[]", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 2);
+		writeIndented(stream, format("[] (at []:[])", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 2);
 
 		stream << '\n';
 	}
@@ -96,7 +104,7 @@ namespace scroll {
 		std::ostream& stream = std::cerr;
 
 		writeLogHeader(stream, source, "TRACE", ConsoleEscapeCode::BACKGROUND_COLOR_WHITE, ConsoleEscapeCode::FOREGROUND_COLOR_BLACK);
-		writeIndented(stream, format("[]\nat []:[]", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 2);
+		writeIndented(stream, format("[] (at []:[])", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 2);
 
 		stream << '\n';
 	}
@@ -195,7 +203,7 @@ namespace scroll {
 
 		writeLogHeader(stream, source, "ERROR", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
 		stream << "\033[" << ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_RED << 'm';
-		writeIndented(stream, format("[]\nat [] ([]:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 2);
+		writeIndented(stream, format("[] (in [], at []:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 2);
 		stream << "\033[" << ConsoleEscapeCode::RESET_FOREGROUND_COLOR << "m\n";
 	}
 
@@ -209,7 +217,7 @@ namespace scroll {
 
 		writeLogHeader(stream, source, "ERROR", ConsoleEscapeCode::BACKGROUND_COLOR_LIGHT_RED, ConsoleEscapeCode::FOREGROUND_COLOR_WHITE);
 		stream << "\033[" << ConsoleEscapeCode::FOREGROUND_COLOR_LIGHT_RED << 'm';
-		writeIndented(stream, format("[]\nat [] ([]:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 2);
+		writeIndented(stream, format("[] (in [], at []:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 2);
 		stream << "\033[" << ConsoleEscapeCode::RESET_FOREGROUND_COLOR << "m\n";
 	}
 }

@@ -4,13 +4,23 @@
 #pragma once
 
 #include <chrono>
+#include <ctime>
 #include <fstream>
 #include <iomanip>
+#include <ios>
 #include <iostream>
 #include <sstream>
 
 #ifndef ATL_MODULE_BASE
 	#include "Base/Base/Base.hpp"
+#endif
+
+#if ATL_OPERATING_SYSTEM == ATL_OPERATING_SYSTEM_WINDOWS
+	#include <Windows.h>
+
+	#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+		#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+	#endif
 #endif
 
 namespace scroll {
@@ -23,4 +33,6 @@ namespace scroll {
 
 	using atl::sequence;
 	using atl::view;
+
+	using atl::copy;
 }

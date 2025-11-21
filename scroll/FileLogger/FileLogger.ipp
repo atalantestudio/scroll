@@ -6,7 +6,7 @@ namespace scroll {
 		Logger(minLogLevel, source),
 		stream(stream)
 	{
-		ASSERT(stream.is_open());
+		ATL_ASSERT(stream.is_open());
 	}
 
 	template<typename Argument>
@@ -16,7 +16,7 @@ namespace scroll {
 		}
 
 		writeLogHeader("TRACE");
-		writeIndented(stream, format("[]\nat []:[]", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 4);
+		writeIndented(stream, format("[] (at []:[])", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 4);
 
 		stream << '\n';
 	}
@@ -28,7 +28,7 @@ namespace scroll {
 		}
 
 		writeLogHeader("TRACE");
-		writeIndented(stream, format("[]\nat []:[]", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 4);
+		writeIndented(stream, format("[] (at []:[])", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 4);
 
 		stream << '\n';
 	}
@@ -112,7 +112,7 @@ namespace scroll {
 		}
 
 		writeLogHeader("ERROR");
-		writeIndented(stream, format("[]\nat [] ([]:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 4);
+		writeIndented(stream, format("[] (in [], at []:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 4);
 
 		stream << '\n';
 	}
@@ -124,7 +124,7 @@ namespace scroll {
 		}
 
 		writeLogHeader("ERROR");
-		writeIndented(stream, format("[]\nat [] ([]:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 4);
+		writeIndented(stream, format("[] (in [], at []:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 4);
 
 		stream << '\n';
 	}

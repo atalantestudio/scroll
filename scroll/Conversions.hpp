@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "ConsoleEscapeCode.hpp"
+#include "scroll/ConsoleEscapeCode.hpp"
 
 namespace scroll {
 	std::ostream& operator<<(std::ostream& stream, view<char8> view);
 	std::ostream& operator<<(std::ostream& stream, ConsoleEscapeCode code);
 }
 
-#include "Conversions.ipp"
+#include "scroll/Conversions.ipp"

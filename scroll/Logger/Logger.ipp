@@ -2,13 +2,20 @@
 // Licensed under MIT.
 
 namespace scroll {
+	template<typename T>
+	sequence<char8> ArgumentInjectionPattern<T>::argumentInjectionPattern = "[]";
+
 	template<typename Argument>
 	sequence<char8> Logger::format(Argument&& argument) {
-		std::ostringstream stream;
+		static std::ostringstream stream;
 
 		stream << argument;
 
-		return stream.str().c_str();
+		const sequence<char8> formattedArgument = stream.str().c_str();
+
+		stream.str({});
+
+		return formattedArgument;
 	}
 
 	template<typename HeadArgument, typename... Argument>
@@ -23,46 +30,61 @@ namespace scroll {
 
 		sequence<char8> updatedPattern(pattern.count() - argumentInjectionPattern.count() + formattedArgument.count());
 
-		std::copy_n(&pattern[0], argumentInjectionPatternOffset, &updatedPattern[0]);
-		std::copy(formattedArgument.begin(), formattedArgument.end(), &updatedPattern[argumentInjectionPatternOffset]);
+		copy(&pattern[0], &pattern[argumentInjectionPatternOffset], &updatedPattern[0]);
+		copy(formattedArgument.begin(), formattedArgument.end(), &updatedPattern[argumentInjectionPatternOffset]);
 
 		if (argumentInjectionPatternOffset + argumentInjectionPattern.count() < pattern.count()) {
-			std::copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.count()]);
+			copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.count()]);
 		}
 
 		return format(updatedPattern, std::forward<Argument>(arguments)...);
 	}
-
-	inline sequence<char8> Logger::argumentInjectionPattern = "[]";
 
 	inline view<char8> Logger::getArgumentInjectionPattern() {
 		return argumentInjectionPattern;
 	}
 
 	inline void Logger::setArgumentInjectionPattern(view<char8> pattern) {
-		ASSERT(pattern.count() > 0);
+		ATL_ASSERT(pattern.count() > 0);
 
 		argumentInjectionPattern = &pattern[0];
 	}
 
 	inline sequence<char8> Logger::timestamp() {
+		static std::ostringstream usStream;
+
 		const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-		const uint64 ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - std::chrono::time_point_cast<std::chrono::seconds>(now)).count();
+		const uint64 us = std::chrono::duration_cast<std::chrono::microseconds>(now - std::chrono::time_point_cast<std::chrono::seconds>(now)).count();
 		const std::time_t time = std::chrono::system_clock::to_time_t(now);
 
-		std::tm dateTime;
+		std::tm* dateTime;
 
-		localtime_s(&dateTime, &time);
+		#ifdef _MSC_VER
+			std::tm _dateTime{};
 
-		// NOTE: std::strftime writes the null-terminating character.
+			const errno_t error = localtime_s(&_dateTime, &time);
+
+			ATL_ASSERT(error == 0);
+
+			dateTime = &_dateTime;
+		#else
+			dateTime = std::localtime(&time);
+		#endif
+
+		// Include null-terminating character.
 		sequence<char8> hmsString(9);
 
-		ASSERT(std::strftime(&hmsString[0], hmsString.count(), "%T", &dateTime) > 0);
+		const uint64 hmsCharacterCount = std::strftime(&hmsString[0], hmsString.count(), "%H:%M:%S", dateTime);
 
-		std::ostringstream msStream;
-		msStream << std::setw(3) << std::setfill('0') << ms;
+		ATL_ASSERT(hmsCharacterCount > 0);
 
-		return format("[].[]", hmsString, msStream.str());
+		usStream << std::setw(6) << std::setfill('0') << us;
+
+		const sequence<char8> timestamp = format("[].[]", hmsString, usStream.str());
+
+		usStream.str({});
+
+		return timestamp;
 	}
 
 	inline LogLevel Logger::getMinLogLevel() const {
@@ -79,7 +101,7 @@ namespace scroll {
 	{}
 
 	inline uint16 Logger::getLogIndentation() const {
-		uint16 indentation = static_cast<uint16>(TIMESTAMP_SIZE + MAX_LOG_LEVEL_NAME_SIZE + 4);
+		uint16 indentation = static_cast<uint16>(TIMESTAMP_SIZE + MAX_LOG_LEVEL_NAME_SIZE + 6);
 
 		if (source.count() > 0) {
 			indentation += static_cast<uint16>(source.count()) + 1;
