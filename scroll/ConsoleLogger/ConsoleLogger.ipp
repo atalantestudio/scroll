@@ -14,9 +14,10 @@ namespace scroll {
 	}
 
 	inline ConsoleLogger::ConsoleLogger(std::ostream& stream, LogLevel minimumLogLevel, view<char8> source) :
-		Logger(minimumLogLevel, source),
-		stream(&stream)
-	{}
+		Logger(minimumLogLevel, source)
+	{
+		setOutputStream(stream);
+	}
 
 	inline ConsoleLogger::~ConsoleLogger() {
 		if (writingEscapeCodes) {
@@ -30,6 +31,13 @@ namespace scroll {
 
 	inline void ConsoleLogger::setOutputStream(std::ostream& stream) {
 		this->stream = &stream;
+
+		#if ATL_OPERATING_SYSTEM == ATL_OPERATING_SYSTEM_WINDOWS
+			const HANDLE hConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+			ATL_ASSERT(hConsoleHandle != NULL && hConsoleHandle != INVALID_HANDLE_VALUE);
+			ATL_ASSERT(SetConsoleMode(hConsoleHandle, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING) > 0);
+		#endif
 	}
 
 	template<typename Argument>
