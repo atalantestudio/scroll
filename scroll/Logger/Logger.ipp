@@ -47,6 +47,8 @@ namespace scroll {
 	}
 
 	inline sequence<char8> Logger::timestamp() {
+		static std::ostringstream usStream;
+
 		const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 		const uint64 us = std::chrono::duration_cast<std::chrono::microseconds>(now - std::chrono::time_point_cast<std::chrono::seconds>(now)).count();
 		const std::time_t time = std::chrono::system_clock::to_time_t(now);
@@ -72,11 +74,13 @@ namespace scroll {
 
 		ATL_ASSERT(hmsCharacterCount > 0);
 
-		// TODO: Reuse the stream.
-		std::ostringstream usStream;
 		usStream << std::setw(6) << std::setfill('0') << us;
 
-		return format("[].[]", hmsString, usStream.str());
+		const sequence<char8> timestamp = format("[].[]", hmsString, usStream.str());
+
+		usStream.str({});
+
+		return timestamp;
 	}
 
 	inline LogLevel Logger::getMinLogLevel() const {
@@ -93,7 +97,7 @@ namespace scroll {
 	{}
 
 	inline uint16 Logger::getLogIndentation() const {
-		uint16 indentation = static_cast<uint16>(1 + TIMESTAMP_SIZE + 3 + MAX_LOG_LEVEL_NAME_SIZE + 2);
+		uint16 indentation = static_cast<uint16>(TIMESTAMP_SIZE + MAX_LOG_LEVEL_NAME_SIZE + 6);
 
 		if (source.count() > 0) {
 			indentation += static_cast<uint16>(source.count()) + 1;
