@@ -23,11 +23,11 @@ namespace scroll {
 
 		sequence<char8> updatedPattern(pattern.count() - argumentInjectionPattern.count() + formattedArgument.count());
 
-		std::copy_n(&pattern[0], argumentInjectionPatternOffset, &updatedPattern[0]);
-		std::copy(formattedArgument.begin(), formattedArgument.end(), &updatedPattern[argumentInjectionPatternOffset]);
+		copy(&pattern[0], &pattern[argumentInjectionPatternOffset], &updatedPattern[0]);
+		copy(formattedArgument.begin(), formattedArgument.end(), &updatedPattern[argumentInjectionPatternOffset]);
 
 		if (argumentInjectionPatternOffset + argumentInjectionPattern.count() < pattern.count()) {
-			std::copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.count()]);
+			copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.count()]);
 		}
 
 		return format(updatedPattern, std::forward<Argument>(arguments)...);
