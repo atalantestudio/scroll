@@ -6,7 +6,12 @@
 #include "LogLevel.hpp"
 
 namespace scroll {
-	class Logger {
+	template<typename T = void>
+	struct ArgumentInjectionPattern {
+		static sequence<char8> argumentInjectionPattern;
+	};
+
+	class Logger : public ArgumentInjectionPattern<> {
 		public:
 			// Returns the current argument injection pattern.
 			static view<char8> getArgumentInjectionPattern();
@@ -27,8 +32,6 @@ namespace scroll {
 			static void writeIndented(std::ostream& stream, view<char8> text, uint64 indentation);
 
 		private:
-			static sequence<char8> argumentInjectionPattern;
-
 			static constexpr uint64 TIMESTAMP_SIZE = 14;
 			static constexpr uint64 MAX_LOG_LEVEL_NAME_SIZE = 7;
 

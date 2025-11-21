@@ -2,6 +2,9 @@
 // Licensed under MIT.
 
 namespace scroll {
+	template<typename T>
+	sequence<char8> ArgumentInjectionPattern<T>::argumentInjectionPattern = "[]";
+
 	template<typename Argument>
 	sequence<char8> Logger::format(Argument&& argument) {
 		std::ostringstream stream;
@@ -32,8 +35,6 @@ namespace scroll {
 
 		return format(updatedPattern, std::forward<Argument>(arguments)...);
 	}
-
-	inline sequence<char8> Logger::argumentInjectionPattern = "[]";
 
 	inline view<char8> Logger::getArgumentInjectionPattern() {
 		return argumentInjectionPattern;
