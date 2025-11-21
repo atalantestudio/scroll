@@ -36,7 +36,19 @@ namespace scroll {
 			const HANDLE hConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 			ATL_ASSERT(hConsoleHandle != NULL && hConsoleHandle != INVALID_HANDLE_VALUE);
-			ATL_ASSERT(SetConsoleMode(hConsoleHandle, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING) > 0);
+
+			BOOL result = FALSE;
+			DWORD mode;
+
+			result = GetConsoleMode(hConsoleHandle, &mode);
+
+			ATL_ASSERT(result > 0);
+
+			mode |= ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+
+			result = SetConsoleMode(hConsoleHandle, mode);
+
+			ATL_ASSERT(result > 0);
 		#endif
 	}
 
