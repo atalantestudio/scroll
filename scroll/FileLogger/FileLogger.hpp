@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "Logger/Logger.hpp"
-#include "LogLevel.hpp"
+#include "scroll/Logger/Logger.hpp"
+#include "scroll/LogLevel.hpp"
 
 namespace scroll {
 	class FileLogger : public Logger {
@@ -49,4 +49,4 @@ namespace scroll {
 	};
 }
 
-#include "FileLogger.ipp"
+#include "scroll/FileLogger/FileLogger.ipp"

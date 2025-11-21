@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "ConsoleEscapeCode.hpp"
-#include "Logger/Logger.hpp"
-#include "LogLevel.hpp"
+#include "scroll/ConsoleEscapeCode.hpp"
+#include "scroll/Logger/Logger.hpp"
+#include "scroll/LogLevel.hpp"
 
 namespace scroll {
 	class ConsoleLogger : public Logger {
@@ -64,4 +64,4 @@ namespace scroll {
 	};
 }
 
-#include "ConsoleLogger.ipp"
+#include "scroll/ConsoleLogger/ConsoleLogger.ipp"

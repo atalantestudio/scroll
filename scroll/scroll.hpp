@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "base.hpp"
-
-#include "Conversions.hpp"
-
-#include "ConsoleLogger/ConsoleLogger.hpp"
-#include "FileLogger/FileLogger.hpp"
+#include "scroll/base.hpp"
+#include "scroll/Conversions.hpp"
+#include "scroll/ConsoleLogger/ConsoleLogger.hpp"
+#include "scroll/FileLogger/FileLogger.hpp"
