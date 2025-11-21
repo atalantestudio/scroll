@@ -56,7 +56,9 @@ namespace scroll {
 		#ifdef _MSC_VER
 			std::tm _dateTime{};
 
-			ATL_ASSERT(!localtime_s(&_dateTime, &time));
+			const errno_t error = localtime_s(&_dateTime, &time);
+
+			ATL_ASSERT(error == 0);
 
 			dateTime = &_dateTime;
 		#else
@@ -66,7 +68,9 @@ namespace scroll {
 		// Include null-terminating character.
 		sequence<char8> hmsString(9);
 
-		ATL_ASSERT(std::strftime(&hmsString[0], hmsString.count(), "%H:%M:%S", dateTime) > 0);
+		const uint64 hmsCharacterCount = std::strftime(&hmsString[0], hmsString.count(), "%H:%M:%S", dateTime);
+
+		ATL_ASSERT(hmsCharacterCount > 0);
 
 		// TODO: Reuse the stream.
 		std::ostringstream msStream;
