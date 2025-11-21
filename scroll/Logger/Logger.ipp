@@ -7,11 +7,15 @@ namespace scroll {
 
 	template<typename Argument>
 	sequence<char8> Logger::format(Argument&& argument) {
-		std::ostringstream stream;
+		static std::ostringstream stream;
 
 		stream << argument;
 
-		return stream.str().c_str();
+		const sequence<char8> formattedArgument = stream.str().c_str();
+
+		stream.str({});
+
+		return formattedArgument;
 	}
 
 	template<typename HeadArgument, typename... Argument>
