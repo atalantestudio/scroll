@@ -54,7 +54,7 @@ namespace scroll {
 	}
 
 	template<>
-	ConsoleLogger& ConsoleLogger::operator<<(ConsoleEscapeCode&& argument) {
+	inline ConsoleLogger& ConsoleLogger::operator<<(ConsoleEscapeCode&& argument) {
 		if (!writingEscapeCodes) {
 			writingEscapeCodes = true;
 
