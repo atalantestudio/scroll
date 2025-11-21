@@ -23,4 +23,6 @@ namespace scroll {
 
 	using atl::sequence;
 	using atl::view;
+
+	using atl::copy;
 }
