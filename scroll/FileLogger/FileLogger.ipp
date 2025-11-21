@@ -6,7 +6,7 @@ namespace scroll {
 		Logger(minLogLevel, source),
 		stream(stream)
 	{
-		ASSERT(stream.is_open());
+		ATL_ASSERT(stream.is_open());
 	}
 
 	template<typename Argument>

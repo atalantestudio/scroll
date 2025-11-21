@@ -40,7 +40,7 @@ namespace scroll {
 	}
 
 	inline void Logger::setArgumentInjectionPattern(view<char8> pattern) {
-		ASSERT(pattern.count() > 0);
+		ATL_ASSERT(pattern.count() > 0);
 
 		argumentInjectionPattern = &pattern[0];
 	}
@@ -57,7 +57,7 @@ namespace scroll {
 		// NOTE: std::strftime writes the null-terminating character.
 		sequence<char8> hmsString(9);
 
-		ASSERT(std::strftime(&hmsString[0], hmsString.count(), "%T", &dateTime) > 0);
+		ATL_ASSERT(std::strftime(&hmsString[0], hmsString.count(), "%T", &dateTime) > 0);
 
 		std::ostringstream msStream;
 		msStream << std::setw(3) << std::setfill('0') << ms;
