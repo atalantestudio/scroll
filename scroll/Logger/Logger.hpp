@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "LogLevel.hpp"
+#include "scroll/LogLevel.hpp"
 
 namespace scroll {
 	template<typename T = void>
@@ -51,4 +51,4 @@ namespace scroll {
 	};
 }
 
-#include "Logger.ipp"
+#include "scroll/Logger/Logger.ipp"
