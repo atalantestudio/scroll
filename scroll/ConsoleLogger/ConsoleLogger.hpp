@@ -24,9 +24,6 @@ namespace scroll {
 			template<typename Argument>
 			ConsoleLogger& operator<<(Argument&& argument);
 
-			template<>
-			ConsoleLogger& operator<<(ConsoleEscapeCode&& argument);
-
 			ConsoleLogger& padLeft(uint64 padding);
 
 			ConsoleLogger& padRight(uint64 padding);
