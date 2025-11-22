@@ -9,13 +9,8 @@
 
 namespace scroll {
 	class ConsoleLogger : public Logger {
-		private:
-			static void writeLogHeader(std::ostream& stream, view<char8> source, view<char8> levelName, ConsoleEscapeCode levelBackgroundColor, ConsoleEscapeCode levelForegroundColor);
-
 		public:
 			explicit ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, view<char8> source);
-
-			~ConsoleLogger();
 
 			std::ostream& getOutputStream();
 
@@ -29,10 +24,10 @@ namespace scroll {
 			ConsoleLogger& padRight(uint64 padding);
 
 			template<typename Argument>
-			void trace(view<char8> file, uint32 line, Argument&& argument);
+			void trace(view<char8> file, uint64 line, Argument&& argument);
 
 			template<typename... Argument>
-			void trace(view<char8> file, uint32 line, view<char8> pattern, Argument&&... arguments);
+			void trace(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void debug(Argument&& argument);
@@ -59,7 +54,52 @@ namespace scroll {
 			void error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
 		private:
+			#if ATL_OPERATING_SYSTEM == ATL_OPERATING_SYSTEM_WINDOWS
+				void setConsoleMode(DWORD nStdHandle) {
+					const HANDLE hConsoleHandle = GetStdHandle(nStdHandle);
+
+					ATL_ASSERT(hConsoleHandle != NULL && hConsoleHandle != INVALID_HANDLE_VALUE);
+
+					BOOL result = FALSE;
+					DWORD mode;
+
+					result = GetConsoleMode(hConsoleHandle, &mode);
+
+					if (result == 0) {
+						redirected = true;
+
+						return;
+					}
+
+					result = SetConsoleMode(hConsoleHandle, mode | ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+					ATL_ASSERT(result > 0);
+				}
+			#endif
+
+			template<typename... Argument>
+			uint64 writeConsoleLog(view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeTraceLog(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeDebugLog(view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeInfoLog(view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeWarningLog(view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeErrorLog(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
+
+			void flushLog(uint64 size) const;
+
+		private:
 			std::ostream* stream;
+			bool redirected = false;
 			bool writingEscapeCodes = false;
 	};
 }

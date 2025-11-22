@@ -3,42 +3,7 @@
 
 namespace scroll {
 	template<typename T>
-	sequence<char8> ArgumentInjectionPattern<T>::argumentInjectionPattern = "[]";
-
-	template<typename Argument>
-	sequence<char8> Logger::format(Argument&& argument) {
-		static std::ostringstream stream;
-
-		stream << argument;
-
-		const sequence<char8> formattedArgument = stream.str().c_str();
-
-		stream.str({});
-
-		return formattedArgument;
-	}
-
-	template<typename HeadArgument, typename... Argument>
-	sequence<char8> Logger::format(view<char8> pattern, HeadArgument&& headArgument, Argument&&... arguments) {
-		const uint64 argumentInjectionPatternOffset = pattern.find(argumentInjectionPattern, 0);
-
-		if (argumentInjectionPatternOffset >= pattern.count()) {
-			return pattern;
-		}
-
-		const sequence<char8> formattedArgument = format(headArgument);
-
-		sequence<char8> updatedPattern(pattern.count() - argumentInjectionPattern.count() + formattedArgument.count());
-
-		copy(&pattern[0], &pattern[argumentInjectionPatternOffset], &updatedPattern[0]);
-		copy(formattedArgument.begin(), formattedArgument.end(), &updatedPattern[argumentInjectionPatternOffset]);
-
-		if (argumentInjectionPatternOffset + argumentInjectionPattern.count() < pattern.count()) {
-			copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.count()]);
-		}
-
-		return format(updatedPattern, std::forward<Argument>(arguments)...);
-	}
+	sequence<char8> BaseLogger<T>::argumentInjectionPattern = "[]";
 
 	inline view<char8> Logger::getArgumentInjectionPattern() {
 		return argumentInjectionPattern;
@@ -47,44 +12,21 @@ namespace scroll {
 	inline void Logger::setArgumentInjectionPattern(view<char8> pattern) {
 		ATL_ASSERT(pattern.count() > 0);
 
-		argumentInjectionPattern = &pattern[0];
+		argumentInjectionPattern = pattern;
 	}
 
-	inline sequence<char8> Logger::timestamp() {
-		static std::ostringstream usStream;
+	template<typename Argument>
+	inline std::string Logger::toString(Argument argument) {
+		return std::to_string(argument);
+	}
 
-		const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-		const uint64 us = std::chrono::duration_cast<std::chrono::microseconds>(now - std::chrono::time_point_cast<std::chrono::seconds>(now)).count();
-		const std::time_t time = std::chrono::system_clock::to_time_t(now);
+	template<>
+	inline std::string Logger::toString(const char8* argument) {
+		return argument;
+	}
 
-		std::tm* dateTime;
-
-		#ifdef _MSC_VER
-			std::tm _dateTime{};
-
-			const errno_t error = localtime_s(&_dateTime, &time);
-
-			ATL_ASSERT(error == 0);
-
-			dateTime = &_dateTime;
-		#else
-			dateTime = std::localtime(&time);
-		#endif
-
-		// Include null-terminating character.
-		sequence<char8> hmsString(9);
-
-		const uint64 hmsCharacterCount = std::strftime(&hmsString[0], hmsString.count(), "%H:%M:%S", dateTime);
-
-		ATL_ASSERT(hmsCharacterCount > 0);
-
-		usStream << std::setw(6) << std::setfill('0') << us;
-
-		const sequence<char8> timestamp = format("[].[]", hmsString, usStream.str());
-
-		usStream.str({});
-
-		return timestamp;
+	inline sequence<char8> Logger::format(const sequence<char8>& pattern) {
+		return pattern;
 	}
 
 	inline LogLevel Logger::getMinLogLevel() const {
@@ -100,41 +42,25 @@ namespace scroll {
 		source(source)
 	{}
 
-	inline uint16 Logger::getLogIndentation() const {
-		uint16 indentation = static_cast<uint16>(TIMESTAMP_SIZE + MAX_LOG_LEVEL_NAME_SIZE + 6);
+	inline void Logger::write(char8 character, uint64& offset) {
+		logBuffer[offset] = character;
 
-		if (source.count() > 0) {
-			indentation += static_cast<uint16>(source.count()) + 1;
-		}
-
-		return indentation;
+		offset += 1;
 	}
 
-	inline void Logger::writeIndented(std::ostream& stream, view<char8> text, uint64 indentation) {
-		// TODO: Create string with fixed indentation and write parts of it.
-		sequence<char8> indentationString(indentation);
+	inline void Logger::write(view<char8> text, uint64& offset) {
+		copy(text.begin(), text.end(), &logBuffer[offset]);
 
-		std::fill_n(&indentationString[0], indentation, ' ');
+		offset += text.count();
+	}
 
-		uint64 previousOffset = 0;
-		uint64 offset = 0;
+	inline void Logger::write(view<char8> text, uint64& offset, uint64 padding) {
+		copy(text.begin(), text.end(), &logBuffer[offset] + padding - text.count());
 
-		while (true) {
-			offset = text.find('\n', previousOffset);
+		offset += padding;
+	}
 
-			if (offset == previousOffset) {
-				break;
-			}
-
-			stream.write(&text[previousOffset], offset - previousOffset);
-
-			if (offset >= text.count()) {
-				break;
-			}
-
-			previousOffset = offset + 1;
-
-			stream << '\n' << indentationString;
-		}
+	inline uint64 Logger::writeFormattedArguments(view<char8> pattern, uint64& offset, const sequence<char8>& indentationString) {
+		return writeIndented(pattern, offset, indentationString);
 	}
 }
