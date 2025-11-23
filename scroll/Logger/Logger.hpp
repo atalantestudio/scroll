@@ -126,12 +126,13 @@ namespace scroll {
 			template<typename Argument, typename... PackedArgument>
 			void writeFormattedArguments(view<char8> pattern, const sequence<char8>& indentationString, Argument&& argument, PackedArgument&&... arguments) {
 				const uint64 argumentInjectionPatternOffset = pattern.find(argumentInjectionPattern, 0);
-				const view<char8> preformatted(&pattern[0], argumentInjectionPatternOffset);
 
-				buffer << preformatted;
+				if (argumentInjectionPatternOffset > 0) {
+					buffer << view<char8>(&pattern[0], argumentInjectionPatternOffset);
 
-				if (argumentInjectionPatternOffset >= pattern.count()) {
-					return;
+					if (argumentInjectionPatternOffset >= pattern.count()) {
+						return;
+					}
 				}
 
 				const std::string formattedArgument = toString(argument);
@@ -168,33 +169,29 @@ namespace scroll {
 					dateTime = std::localtime(&time);
 				#endif
 
-				// TODO
-				/* std::string formatted = toString(dateTime->tm_hour);
+				std::string formatted = toString(dateTime->tm_hour);
 
 				buffer.padLeft(&formatted[0], 2);
 				buffer.jump(1);
 
 				formatted = toString(dateTime->tm_min);
 
-				write(&formatted[0], offset, 2);
-
-				offset += 1;
+				buffer.padLeft(&formatted[0], 2);
+				buffer.jump(1);
 
 				formatted = toString(dateTime->tm_sec);
 
-				write(&formatted[0], offset, 2);
-
-				offset += 1;
+				buffer.padLeft(&formatted[0], 2);
+				buffer.jump(1);
 
 				formatted = toString(us);
 
-				write(&formatted[0], offset, 6); */
+				buffer.padLeft(&formatted[0], 6);
 			}
 
 		protected:
 			LogLevel minLogLevel;
 			view<char8> source;
-
 			TextBuffer buffer;
 	};
 }

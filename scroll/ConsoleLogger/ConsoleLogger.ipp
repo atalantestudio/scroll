@@ -42,7 +42,9 @@ namespace scroll {
 			stream->write(";", 1);
 		}
 
-		*stream << static_cast<uint16>(argument);
+		const std::string string = toString(argument);
+
+		stream->write(&string[0], string.size());
 
 		return *this;
 	}
@@ -126,8 +128,7 @@ namespace scroll {
 
 		writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
 		buffer << " (at " << file << ':' << line << ')' << '\n';
-
-		flush();
+		buffer.flush(std::clog);
 	}
 
 	template<typename... Argument>
@@ -140,8 +141,7 @@ namespace scroll {
 
 		writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
 		buffer << '\n';
-
-		flush();
+		buffer.flush(std::clog);
 	}
 
 	template<typename... Argument>
@@ -154,8 +154,7 @@ namespace scroll {
 
 		writeConsoleLog(LOG_LEVEL, 7, pattern, std::forward<Argument>(arguments)...);
 		buffer << '\n';
-
-		flush();
+		buffer.flush(std::clog);
 	}
 
 	template<typename... Argument>
@@ -168,8 +167,7 @@ namespace scroll {
 
 		writeConsoleLog(LOG_LEVEL, 9, pattern, std::forward<Argument>(arguments)...);
 		buffer << "\033[39m\n";
-
-		flush();
+		buffer.flush(std::clog);
 	}
 
 	template<typename... Argument>
@@ -182,11 +180,6 @@ namespace scroll {
 
 		writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
 		buffer << " (in " << function << ", at " << file << ':' << line << ")\033[39m\n";
-
-		flush();
-	}
-
-	inline void ConsoleLogger::flush() const {
-		std::clog.write(buffer.buffer, buffer.offset);
+		buffer.flush(std::clog);
 	}
 }

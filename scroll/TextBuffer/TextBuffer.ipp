@@ -95,10 +95,7 @@
 	inline TextBuffer& TextBuffer::operator<<(Argument argument) {
 		const std::string string = toString(argument);
 
-		copy(string.begin(), string.end(), &buffer[offset]);
-		jump(string.size());
-
-		return *this;
+		return operator<<(view<char8>(&string[0], string.size()));
 	}
 
 	template<>
@@ -108,6 +105,19 @@
 		jump(1);
 
 		return *this;
+	}
+
+	template<>
+	inline TextBuffer& TextBuffer::operator<<(view<char8> argument) {
+		copy(argument.begin(), argument.end(), &buffer[offset]);
+		jump(argument.count());
+
+		return *this;
+	}
+
+	template<>
+	inline TextBuffer& TextBuffer::operator<<(sequence<char8> argument) {
+		return operator<<(view<char8>(&argument[0], argument.count()));
 	}
 
 	inline TextBuffer& TextBuffer::padLeft(view<char8> text, uint64 padding) {
@@ -122,6 +132,12 @@
 		offset += ATL_MAX(0, padding - text.count());
 
 		return textBuffer;
+	}
+
+	inline void TextBuffer::flush(std::ostream& stream) {
+		stream.write(&buffer[0], offset);
+
+		clear();
 	}
 
 	inline void TextBuffer::clear() {
