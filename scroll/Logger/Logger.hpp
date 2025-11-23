@@ -145,7 +145,9 @@ namespace scroll {
 					return;
 				}
 
-				buffer << argument;
+				const std::string formattedArgument = toString(argument);
+
+				writeIndented(&formattedArgument[0], indentationString);
 
 				const uint64 patternOffset = argumentInjectionPatternOffset + argumentInjectionPattern.count();
 
