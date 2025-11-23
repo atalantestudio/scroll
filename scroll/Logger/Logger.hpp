@@ -4,6 +4,7 @@
 #pragma once
 
 #include "scroll/LogLevel.hpp"
+#include "scroll/TextBuffer/TextBuffer.hpp"
 
 namespace scroll {
 	template<typename T = void>
@@ -19,9 +20,6 @@ namespace scroll {
 
 			// Replaces the current argument injection pattern.
 			static void setArgumentInjectionPattern(view<char8> pattern);
-
-			template<typename Argument>
-			static std::string toString(Argument argument);
 
 			static sequence<char8> format(const sequence<char8>& pattern);
 
@@ -58,9 +56,6 @@ namespace scroll {
 				return indentationString;
 			}
 
-		protected:
-			static constexpr uint64 MAX_LOG_BUFFER_SIZE = 2048;
-
 		public:
 			LogLevel getMinLogLevel() const;
 
@@ -69,46 +64,41 @@ namespace scroll {
 		protected:
 			explicit Logger(LogLevel minLogLevel, view<char8> source);
 
-			void write(char8 character, uint64& offset);
-			void write(view<char8> text, uint64& offset);
-			void write(view<char8> text, uint64& offset, uint64 padding);
-
 			template<typename... Argument>
-			uint64 writeLog(uint64 offset, view<char8> bufferTemplate, view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments) {
+			void writeLog(uint64 offset, view<char8> bufferTemplate, view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments) {
 				#ifdef _MSC_VER
-					const errno_t error = strncpy_s(&logBuffer[0], bufferTemplate.count() + 1, &bufferTemplate[0], bufferTemplate.count());
+					const errno_t error = strncpy_s(&buffer.buffer[0], bufferTemplate.count() + 1, &bufferTemplate[0], bufferTemplate.count());
 
 					ATL_ASSERT(error == 0);
 				#else
-					std::strncpy(&logBuffer[0], &bufferTemplate[0], bufferTemplate.count());
+					std::strncpy(&buffer.buffer[0], &bufferTemplate[0], bufferTemplate.count());
 				#endif
+
+				buffer.seek(offset);
+
+				writeTimestamp();
+
+				buffer.seek(bufferTemplate.count());
 
 				uint64 indentation = 18;
 
-				writeTimestamp(offset);
-
-				offset = bufferTemplate.count();
-
 				if (source.count() > 0) {
-					write(source, offset);
-					write(' ', offset);
+					buffer << source << ' ';
 
 					indentation += source.count() + 1;
 				}
 
-				write(level, offset);
+				buffer << level;
 
 				indentation += levelSize;
 
 				const sequence<char8> indentationString = createIndentationString(indentation);
 
-				writeFormattedArguments(pattern, offset, indentationString, std::forward<Argument>(arguments)...);
-
-				return offset;
+				writeFormattedArguments(pattern, indentationString, std::forward<Argument>(arguments)...);
 			}
 
 		private:
-			uint64 writeIndented(view<char8> pattern, uint64& offset, const sequence<char8>& indentationString) {
+			void writeIndented(view<char8> pattern, const sequence<char8>& indentationString) {
 				uint64 previousLineOffset = 0;
 				uint64 lineOffset = 0;
 
@@ -119,50 +109,47 @@ namespace scroll {
 						break;
 					}
 
-					write(view<char8>(&pattern[previousLineOffset], lineOffset - previousLineOffset), offset);
+					buffer << view<char8>(&pattern[previousLineOffset], lineOffset - previousLineOffset);
 
 					if (lineOffset >= pattern.count()) {
 						break;
 					}
 
-					write('\n', offset);
-					write(indentationString, offset);
+					buffer << '\n' << indentationString;
 
 					previousLineOffset = lineOffset + 1;
 				}
-
-				return offset;
 			}
 
-			uint64 writeFormattedArguments(view<char8> pattern, uint64& offset, const sequence<char8>& indentationString);
+			void writeFormattedArguments(view<char8> pattern, const sequence<char8>& indentationString);
 
 			template<typename Argument, typename... PackedArgument>
-			uint64 writeFormattedArguments(view<char8> pattern, uint64& offset, const sequence<char8>& indentationString, Argument&& argument, PackedArgument&&... arguments) {
+			void writeFormattedArguments(view<char8> pattern, const sequence<char8>& indentationString, Argument&& argument, PackedArgument&&... arguments) {
 				const uint64 argumentInjectionPatternOffset = pattern.find(argumentInjectionPattern, 0);
 				const view<char8> preformatted(&pattern[0], argumentInjectionPatternOffset);
 
-				write(preformatted, offset);
+				buffer << preformatted;
 
 				if (argumentInjectionPatternOffset >= pattern.count()) {
-					return offset;
+					return;
 				}
 
 				const std::string formattedArgument = toString(argument);
 
-				writeIndented(&formattedArgument[0], offset, indentationString);
+				writeIndented(&formattedArgument[0], indentationString);
 
 				const uint64 patternOffset = argumentInjectionPatternOffset + argumentInjectionPattern.count();
 
 				if (patternOffset >= pattern.count()) {
-					return offset;
+					return;
 				}
 
 				pattern = view<char8>(&pattern[patternOffset], pattern.count() - patternOffset);
 
-				return writeFormattedArguments(pattern, offset, indentationString, std::forward<PackedArgument>(arguments)...);
+				writeFormattedArguments(pattern, indentationString, std::forward<PackedArgument>(arguments)...);
 			}
 
-			void writeTimestamp(uint64& offset) {
+			void writeTimestamp() {
 				const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 				const uint64 us = std::chrono::duration_cast<std::chrono::microseconds>(now - std::chrono::time_point_cast<std::chrono::seconds>(now)).count();
 				const std::time_t time = std::chrono::system_clock::to_time_t(now);
@@ -181,11 +168,11 @@ namespace scroll {
 					dateTime = std::localtime(&time);
 				#endif
 
-				std::string formatted = toString(dateTime->tm_hour);
+				// TODO
+				/* std::string formatted = toString(dateTime->tm_hour);
 
-				write(&formatted[0], offset, 2);
-
-				offset += 1;
+				buffer.padLeft(&formatted[0], 2);
+				buffer.jump(1);
 
 				formatted = toString(dateTime->tm_min);
 
@@ -201,13 +188,14 @@ namespace scroll {
 
 				formatted = toString(us);
 
-				write(&formatted[0], offset, 6);
+				write(&formatted[0], offset, 6); */
 			}
 
 		protected:
 			LogLevel minLogLevel;
 			view<char8> source;
-			char8 logBuffer[MAX_LOG_BUFFER_SIZE]{};
+
+			TextBuffer buffer;
 	};
 }
 

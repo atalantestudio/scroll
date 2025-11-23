@@ -26,12 +26,22 @@
 namespace scroll {
 	using atl::uint8;
 	using atl::uint16;
+	using atl::uint32;
 	using atl::uint64;
 
+	using atl::sint8;
+	using atl::sint16;
+	using atl::sint32;
+	using atl::sint64;
+
 	using atl::char8;
+
+	using atl::float32;
+	using atl::float64;
 
 	using atl::sequence;
 	using atl::view;
 
 	using atl::copy;
+	using atl::pointer_cast;
 }

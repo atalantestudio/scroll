@@ -43,7 +43,7 @@ namespace scroll {
 
 		private:
 			template<typename... Argument>
-			uint64 writeFileLog(view<char8> level, view<char8> pattern, Argument&&... arguments);
+			void writeFileLog(view<char8> level, view<char8> pattern, Argument&&... arguments);
 
 			template<typename... Argument>
 			void writeTraceLog(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
@@ -60,7 +60,7 @@ namespace scroll {
 			template<typename... Argument>
 			void writeErrorLog(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
-			void flushLog(uint64 size);
+			void flush();
 
 		public:
 			std::ofstream& stream;
