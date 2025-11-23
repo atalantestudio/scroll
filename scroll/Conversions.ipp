@@ -7,7 +7,7 @@ namespace scroll {
 	}
 
 	inline std::ostream& operator<<(std::ostream& stream, const sequence<char8>& sequence) {
-		return stream << view<char8>(&sequence[0], sequence.count());
+		return stream << &sequence[0];
 	}
 
 	inline std::ostream& operator<<(std::ostream& stream, ConsoleEscapeCode code) {
