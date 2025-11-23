@@ -1,5 +1,5 @@
-﻿// Copyright 2025 Atalante.
-// Licensed under MIT.
+﻿// Copyright 2025 Atalante Studio.
+// Distributed under the MIT License.
 
 #pragma once
 
@@ -12,10 +12,10 @@ namespace scroll {
 			explicit FileLogger(std::ofstream& stream, LogLevel minLogLevel, view<char8> source);
 
 			template<typename Argument>
-			void trace(view<char8> file, uint32 line, Argument&& argument);
+			void trace(view<char8> file, uint64 line, Argument&& argument);
 
 			template<typename... Argument>
-			void trace(view<char8> file, uint32 line, view<char8> pattern, Argument&&... arguments);
+			void trace(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
 			template<typename Argument>
 			void debug(Argument&& argument);
@@ -42,7 +42,23 @@ namespace scroll {
 			void error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
 		private:
-			void writeLogHeader(view<char8> levelName);
+			template<typename... Argument>
+			void writeFileLog(view<char8> level, view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeTraceLog(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeDebugLog(view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeInfoLog(view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeWarningLog(view<char8> pattern, Argument&&... arguments);
+
+			template<typename... Argument>
+			void writeErrorLog(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
 		public:
 			std::ofstream& stream;

@@ -1,5 +1,5 @@
-﻿// Copyright 2025 Atalante.
-// Licensed under MIT.
+﻿// Copyright 2025 Atalante Studio.
+// Distributed under the MIT License.
 
 namespace scroll {
 	inline FileLogger::FileLogger(std::ofstream& stream, LogLevel minLogLevel, view<char8> source) :
@@ -10,132 +10,124 @@ namespace scroll {
 	}
 
 	template<typename Argument>
-	void FileLogger::trace(view<char8> file, uint32 line, Argument&& argument) {
+	inline void FileLogger::trace(view<char8> file, uint64 line, Argument&& argument) {
+		writeTraceLog(file, line, argumentInjectionPattern, std::forward<Argument>(argument));
+	}
+
+	template<typename... Argument>
+	inline void FileLogger::trace(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments) {
+		writeTraceLog(file, line, pattern, std::forward<Argument>(arguments)...);
+	}
+
+	template<typename Argument>
+	inline void FileLogger::debug(Argument&& argument) {
+		writeDebugLog(argumentInjectionPattern, std::forward<Argument>(argument));
+	}
+
+	template<typename... Argument>
+	inline void FileLogger::debug(view<char8> pattern, Argument&&... arguments) {
+		writeDebugLog(pattern, std::forward<Argument>(arguments)...);
+	}
+
+	template<typename Argument>
+	inline void FileLogger::info(Argument&& argument) {
+		writeInfoLog(argumentInjectionPattern, std::forward<Argument>(argument));
+	}
+
+	template<typename... Argument>
+	inline void FileLogger::info(view<char8> pattern, Argument&&... arguments) {
+		writeInfoLog(pattern, std::forward<Argument>(arguments)...);
+	}
+
+	template<typename Argument>
+	inline void FileLogger::warning(Argument&& argument) {
+		writeWarningLog(argumentInjectionPattern, std::forward<Argument>(argument));
+	}
+
+	template<typename... Argument>
+	inline void FileLogger::warning(view<char8> pattern, Argument&&... arguments) {
+		writeWarningLog(pattern, std::forward<Argument>(arguments)...);
+	}
+
+	template<typename Argument>
+	inline void FileLogger::error(view<char8> function, view<char8> file, uint64 line, Argument&& argument) {
+		writeErrorLog(function, file, line, argumentInjectionPattern, std::forward<Argument>(argument));
+	}
+
+	template<typename... Argument>
+	inline void FileLogger::error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments) {
+		writeErrorLog(function, file, line, pattern, std::forward<Argument>(arguments)...);
+	}
+
+	template<typename... Argument>
+	inline void FileLogger::writeFileLog(view<char8> level, view<char8> pattern, Argument&&... arguments) {
+		static constexpr view<char8> LOG_BUFFER_TEMPLATE = "[00:00:00.000000] ";
+
+		writeLog(1, LOG_BUFFER_TEMPLATE, level, level.count(), pattern, std::forward<Argument>(arguments)...);
+	}
+
+	template<typename... Argument>
+	inline void FileLogger::writeTraceLog(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments) {
+		static constexpr view<char8> LOG_LEVEL = "TRACE ";
+
 		if (LogLevel::TRACE < minLogLevel) {
 			return;
 		}
 
-		writeLogHeader("TRACE");
-		writeIndented(stream, format("[] (at []:[])", format(std::forward<Argument>(argument)), file, line), getLogIndentation() - 4);
-
-		stream << '\n';
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << " (at " << file << ':' << line << ')' << '\n';
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
-	void FileLogger::trace(view<char8> file, uint32 line, view<char8> pattern, Argument&&... arguments) {
-		if (LogLevel::TRACE < minLogLevel) {
-			return;
-		}
+	inline void FileLogger::writeDebugLog(view<char8> pattern, Argument&&... arguments) {
+		static constexpr view<char8> LOG_LEVEL = "DEBUG ";
 
-		writeLogHeader("TRACE");
-		writeIndented(stream, format("[] (at []:[])", format(pattern, std::forward<Argument>(arguments)...), file, line), getLogIndentation() - 4);
-
-		stream << '\n';
-	}
-
-	template<typename Argument>
-	void FileLogger::debug(Argument&& argument) {
 		if (LogLevel::DEBUG < minLogLevel) {
 			return;
 		}
 
-		writeLogHeader("DEBUG");
-		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 4);
-
-		stream << '\n';
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
-	void FileLogger::debug(view<char8> pattern, Argument&&... arguments) {
-		if (LogLevel::DEBUG < minLogLevel) {
-			return;
-		}
+	inline void FileLogger::writeInfoLog(view<char8> pattern, Argument&&... arguments) {
+		static constexpr view<char8> LOG_LEVEL = "INFO ";
 
-		writeLogHeader("DEBUG");
-		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 4);
-
-		stream << '\n';
-	}
-
-	template<typename Argument>
-	void FileLogger::info(Argument&& argument) {
 		if (LogLevel::INFO < minLogLevel) {
 			return;
 		}
 
-		writeLogHeader("INFO");
-		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 5);
-
-		stream << '\n';
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
-	void FileLogger::info(view<char8> pattern, Argument&&... arguments) {
-		if (LogLevel::INFO < minLogLevel) {
-			return;
-		}
+	inline void FileLogger::writeWarningLog(view<char8> pattern, Argument&&... arguments) {
+		static constexpr view<char8> LOG_LEVEL = "WARNING ";
 
-		writeLogHeader("INFO");
-		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 5);
-
-		stream << '\n';
-	}
-
-	template<typename Argument>
-	void FileLogger::warning(Argument&& argument) {
 		if (LogLevel::WARNING < minLogLevel) {
 			return;
 		}
 
-		writeLogHeader("WARNING");
-		writeIndented(stream, format(std::forward<Argument>(argument)), getLogIndentation() - 2);
-
-		stream << '\n';
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
-	void FileLogger::warning(view<char8> pattern, Argument&&... arguments) {
-		if (LogLevel::WARNING < minLogLevel) {
-			return;
-		}
+	inline void FileLogger::writeErrorLog(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments) {
+		static constexpr view<char8> LOG_LEVEL = "ERROR ";
 
-		writeLogHeader("WARNING");
-		writeIndented(stream, format(pattern, std::forward<Argument>(arguments)...), getLogIndentation() - 2);
-
-		stream << '\n';
-	}
-
-	template<typename Argument>
-	void FileLogger::error(view<char8> function, view<char8> file, uint64 line, Argument&& argument) {
 		if (LogLevel::ERROR < minLogLevel) {
 			return;
 		}
 
-		writeLogHeader("ERROR");
-		writeIndented(stream, format("[] (in [], at []:[])", format(std::forward<Argument>(argument)), function, file, line), getLogIndentation() - 4);
-
-		stream << '\n';
-	}
-
-	template<typename... Argument>
-	void FileLogger::error(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments) {
-		if (LogLevel::ERROR < minLogLevel) {
-			return;
-		}
-
-		writeLogHeader("ERROR");
-		writeIndented(stream, format("[] (in [], at []:[])", format(pattern, std::forward<Argument>(arguments)...), function, file, line), getLogIndentation() - 4);
-
-		stream << '\n';
-	}
-
-	inline void FileLogger::writeLogHeader(view<char8> levelName) {
-		stream << '[' << timestamp() << "] ";
-
-		if (source.count() > 0) {
-			stream << source << ' ';
-		}
-
-		stream << levelName << ' ';
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << " (in " << function << ", at " << file << ':' << line << ')' << '\n';
+		buffer.flush(stream);
 	}
 }
