@@ -23,6 +23,8 @@ namespace scroll {
 			TextBuffer& padLeft(view<char8> text, uint64 padding);
 			TextBuffer& padRight(view<char8> text, uint64 padding);
 
+			void flush(std::ostream& stream);
+
 			void clear();
 
 		public:

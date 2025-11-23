@@ -95,8 +95,6 @@ namespace scroll {
 			template<typename... Argument>
 			void writeErrorLog(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
-			void flush() const;
-
 		private:
 			std::ostream* stream;
 			bool redirected = false;

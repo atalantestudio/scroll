@@ -76,8 +76,7 @@ namespace scroll {
 
 		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
 		buffer << " (at " << file << ':' << line << ')' << '\n';
-
-		flush();
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
@@ -90,8 +89,7 @@ namespace scroll {
 
 		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
 		buffer << '\n';
-
-		flush();
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
@@ -104,8 +102,7 @@ namespace scroll {
 
 		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
 		buffer << '\n';
-
-		flush();
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
@@ -118,8 +115,7 @@ namespace scroll {
 
 		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
 		buffer << '\n';
-
-		flush();
+		buffer.flush(stream);
 	}
 
 	template<typename... Argument>
@@ -132,11 +128,6 @@ namespace scroll {
 
 		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
 		buffer << " (in " << function << ", at " << file << ':' << line << ')' << '\n';
-
-		flush();
-	}
-
-	inline void FileLogger::flush() {
-		stream.write(&buffer.buffer[0], buffer.offset);
+		buffer.flush(stream);
 	}
 }
