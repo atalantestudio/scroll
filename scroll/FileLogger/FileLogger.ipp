@@ -60,10 +60,10 @@ namespace scroll {
 	}
 
 	template<typename... Argument>
-	inline uint64 FileLogger::writeFileLog(view<char8> level, view<char8> pattern, Argument&&... arguments) {
+	inline void FileLogger::writeFileLog(view<char8> level, view<char8> pattern, Argument&&... arguments) {
 		static constexpr view<char8> LOG_BUFFER_TEMPLATE = "[00:00:00.000000] ";
 
-		return writeLog(1, LOG_BUFFER_TEMPLATE, level, level.count(), pattern, std::forward<Argument>(arguments)...);
+		writeLog(1, LOG_BUFFER_TEMPLATE, level, level.count(), pattern, std::forward<Argument>(arguments)...);
 	}
 
 	template<typename... Argument>
@@ -74,19 +74,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << " (at " << file << ':' << line << ')' << '\n';
 
-		write(" (at ", offset);
-		write(file, offset);
-		write(':', offset);
-
-		const std::string formattedLine = toString(line);
-
-		write(&formattedLine[0], offset);
-		write(')', offset);
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -97,11 +88,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
 
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -112,11 +102,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
 
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -127,11 +116,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
 
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -142,26 +130,13 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		writeFileLog(LOG_LEVEL, pattern, std::forward<Argument>(arguments)...);
+		buffer << " (in " << function << ", at " << file << ':' << line << ')' << '\n';
 
-		write(" (in ", offset);
-		write(function, offset);
-		write(", at ", offset);
-		write(file, offset);
-		write(':', offset);
-
-		const std::string formattedLine = toString(line);
-
-		write(&formattedLine[0], offset);
-		write(')', offset);
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
-	inline void FileLogger::flushLog(uint64 size) {
-		ATL_ASSERT(size <= MAX_LOG_BUFFER_SIZE);
-
-		stream.write(&logBuffer[0], size);
+	inline void FileLogger::flush() {
+		stream.write(&buffer.buffer[0], buffer.offset);
 	}
 }

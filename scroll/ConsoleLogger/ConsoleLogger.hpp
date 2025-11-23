@@ -78,7 +78,7 @@ namespace scroll {
 			#endif
 
 			template<typename... Argument>
-			uint64 writeConsoleLog(view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments);
+			void writeConsoleLog(view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments);
 
 			template<typename... Argument>
 			void writeTraceLog(view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
@@ -95,7 +95,7 @@ namespace scroll {
 			template<typename... Argument>
 			void writeErrorLog(view<char8> function, view<char8> file, uint64 line, view<char8> pattern, Argument&&... arguments);
 
-			void flushLog(uint64 size) const;
+			void flush() const;
 
 		private:
 			std::ostream* stream;

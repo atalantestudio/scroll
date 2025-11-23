@@ -15,16 +15,6 @@ namespace scroll {
 		argumentInjectionPattern = pattern;
 	}
 
-	template<typename Argument>
-	inline std::string Logger::toString(Argument argument) {
-		return std::to_string(argument);
-	}
-
-	template<>
-	inline std::string Logger::toString(const char8* argument) {
-		return argument;
-	}
-
 	inline sequence<char8> Logger::format(const sequence<char8>& pattern) {
 		return pattern;
 	}
@@ -42,25 +32,7 @@ namespace scroll {
 		source(source)
 	{}
 
-	inline void Logger::write(char8 character, uint64& offset) {
-		logBuffer[offset] = character;
-
-		offset += 1;
-	}
-
-	inline void Logger::write(view<char8> text, uint64& offset) {
-		copy(text.begin(), text.end(), &logBuffer[offset]);
-
-		offset += text.count();
-	}
-
-	inline void Logger::write(view<char8> text, uint64& offset, uint64 padding) {
-		copy(text.begin(), text.end(), &logBuffer[offset] + padding - text.count());
-
-		offset += padding;
-	}
-
-	inline uint64 Logger::writeFormattedArguments(view<char8> pattern, uint64& offset, const sequence<char8>& indentationString) {
-		return writeIndented(pattern, offset, indentationString);
+	inline void Logger::writeFormattedArguments(view<char8> pattern, const sequence<char8>& indentationString) {
+		writeIndented(pattern, indentationString);
 	}
 }

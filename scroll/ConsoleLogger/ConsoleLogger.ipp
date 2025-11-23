@@ -26,7 +26,7 @@ namespace scroll {
 			stream->write("m", 1);
 		}
 
-		*stream << argument;
+		*stream << toString(argument);
 
 		return *this;
 	}
@@ -110,10 +110,10 @@ namespace scroll {
 	}
 
 	template<typename... Argument>
-	inline uint64 ConsoleLogger::writeConsoleLog(view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments) {
+	inline void ConsoleLogger::writeConsoleLog(view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments) {
 		static constexpr view<char8> LOG_BUFFER_TEMPLATE = "\033[2m[00:00:00.000000]\033[22m ";
 
-		return writeLog(5, LOG_BUFFER_TEMPLATE, level, levelSize, pattern, std::forward<Argument>(arguments)...);
+		writeLog(5, LOG_BUFFER_TEMPLATE, level, levelSize, pattern, std::forward<Argument>(arguments)...);
 	}
 
 	template<typename... Argument>
@@ -124,19 +124,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
+		writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
+		buffer << " (at " << file << ':' << line << ')' << '\n';
 
-		write(" (at ", offset);
-		write(file, offset);
-		write(':', offset);
-
-		const std::string formattedLine = toString(line);
-
-		write(&formattedLine[0], offset);
-		write(')', offset);
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -147,11 +138,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
+		writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
 
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -162,11 +152,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeConsoleLog(LOG_LEVEL, 7, pattern, std::forward<Argument>(arguments)...);
+		writeConsoleLog(LOG_LEVEL, 7, pattern, std::forward<Argument>(arguments)...);
+		buffer << '\n';
 
-		write('\n', offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -177,11 +166,10 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeConsoleLog(LOG_LEVEL, 9, pattern, std::forward<Argument>(arguments)...);
+		writeConsoleLog(LOG_LEVEL, 9, pattern, std::forward<Argument>(arguments)...);
+		buffer << "\033[39m\n";
 
-		write("\033[39m\n", offset);
-
-		flushLog(offset);
+		flush();
 	}
 
 	template<typename... Argument>
@@ -192,25 +180,13 @@ namespace scroll {
 			return;
 		}
 
-		uint64 offset = writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
+		writeConsoleLog(LOG_LEVEL, 8, pattern, std::forward<Argument>(arguments)...);
+		buffer << " (in " << function << ", at " << file << ':' << line << ")\033[39m\n";
 
-		write(" (in ", offset);
-		write(function, offset);
-		write(", at ", offset);
-		write(file, offset);
-		write(':', offset);
-
-		const std::string formattedLine = toString(line);
-
-		write(&formattedLine[0], offset);
-		write(")\033[39m\n", offset);
-
-		flushLog(offset);
+		flush();
 	}
 
-	inline void ConsoleLogger::flushLog(uint64 size) const {
-		ATL_ASSERT(size <= MAX_LOG_BUFFER_SIZE);
-
-		std::clog.write(&logBuffer[0], size);
+	inline void ConsoleLogger::flush() const {
+		std::clog.write(buffer.buffer, buffer.offset);
 	}
 }
