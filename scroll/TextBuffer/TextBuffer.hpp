@@ -9,7 +9,7 @@ namespace scroll {
 
 	class TextBuffer {
 		protected:
-			static constexpr uint64 MAX_LOG_BUFFER_SIZE = 2048;
+			static constexpr uint64 MAX_LOG_BUFFER_SIZE = 4096;
 
 		public:
 			sequence<char8> getText() const;
