@@ -11,6 +11,7 @@ namespace scroll {
 	class BaseLogger {
 		protected:
 			static sequence<char8> argumentInjectionPattern;
+			static TextBuffer formatBuffer;
 	};
 
 	class Logger : public BaseLogger<> {
@@ -21,28 +22,39 @@ namespace scroll {
 			// Replaces the current argument injection pattern.
 			static void setArgumentInjectionPattern(view<char8> pattern);
 
-			static sequence<char8> format(const sequence<char8>& pattern);
+			static sequence<char8> format(view<char8> pattern);
 
 			template<typename CurrentArgument, typename... Argument>
-			static sequence<char8> format(const sequence<char8>& pattern, CurrentArgument&& argument, Argument&&... arguments) {
+			static sequence<char8> format(view<char8> pattern, CurrentArgument&& argument, Argument&&... arguments) {
 				const uint64 argumentInjectionPatternOffset = view<char8>(pattern).find(argumentInjectionPattern, 0);
 
+				if (argumentInjectionPatternOffset > 0) {
+					formatBuffer << view<char8>(&pattern[0], argumentInjectionPatternOffset);
+				}
+
 				if (argumentInjectionPatternOffset >= pattern.count()) {
-					return pattern;
+					const sequence<char8> text = formatBuffer.getText();
+
+					formatBuffer.clear();
+
+					return text;
 				}
 
-				const std::string formattedArgument = toString(argument);
+				formatBuffer << argument;
 
-				sequence<char8> updatedPattern(pattern.count() - argumentInjectionPattern.count() + formattedArgument.size());
+				const uint64 patternOffset = argumentInjectionPatternOffset + argumentInjectionPattern.count();
 
-				copy(&pattern[0], &pattern[argumentInjectionPatternOffset], &updatedPattern[0]);
-				copy(formattedArgument.begin(), formattedArgument.end(), &updatedPattern[argumentInjectionPatternOffset]);
+				if (patternOffset >= pattern.count()) {
+					const sequence<char8> text = formatBuffer.getText();
 
-				if (argumentInjectionPatternOffset + argumentInjectionPattern.count() < pattern.count()) {
-					copy(&pattern[argumentInjectionPatternOffset + argumentInjectionPattern.count()], pattern.end(), &updatedPattern[argumentInjectionPatternOffset + formattedArgument.size()]);
+					formatBuffer.clear();
+
+					return text;
 				}
 
-				return format(updatedPattern, std::forward<Argument>(arguments)...);
+				pattern = view<char8>(&pattern[patternOffset], pattern.count() - patternOffset);
+
+				return format(pattern, std::forward<Argument>(arguments)...);
 			}
 
 		private:
@@ -105,11 +117,9 @@ namespace scroll {
 				while (true) {
 					lineOffset = pattern.find('\n', previousLineOffset);
 
-					if (lineOffset == previousLineOffset) {
-						break;
+					if (lineOffset > previousLineOffset) {
+						buffer << view<char8>(&pattern[previousLineOffset], lineOffset - previousLineOffset);
 					}
-
-					buffer << view<char8>(&pattern[previousLineOffset], lineOffset - previousLineOffset);
 
 					if (lineOffset >= pattern.count()) {
 						break;
@@ -128,16 +138,14 @@ namespace scroll {
 				const uint64 argumentInjectionPatternOffset = pattern.find(argumentInjectionPattern, 0);
 
 				if (argumentInjectionPatternOffset > 0) {
-					buffer << view<char8>(&pattern[0], argumentInjectionPatternOffset);
-
-					if (argumentInjectionPatternOffset >= pattern.count()) {
-						return;
-					}
+					writeIndented(view<char8>(&pattern[0], argumentInjectionPatternOffset), indentationString);
 				}
 
-				const std::string formattedArgument = toString(argument);
+				if (argumentInjectionPatternOffset >= pattern.count()) {
+					return;
+				}
 
-				writeIndented(&formattedArgument[0], indentationString);
+				buffer << argument;
 
 				const uint64 patternOffset = argumentInjectionPatternOffset + argumentInjectionPattern.count();
 

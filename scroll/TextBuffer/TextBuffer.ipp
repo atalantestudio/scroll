@@ -79,6 +79,15 @@
 		return argument;
 	}
 
+	template<>
+	inline std::string toString(ConsoleEscapeCode argument) {
+		return std::to_string(static_cast<uint8>(argument));
+	}
+
+	inline sequence<char8> TextBuffer::getText() const {
+		return sequence<char8>(&buffer[0], offset);
+	}
+
 	inline void TextBuffer::jump(uint64 offset) {
 		ATL_ASSERT(this->offset + offset < MAX_LOG_BUFFER_SIZE);
 
@@ -98,7 +107,6 @@
 		return operator<<(view<char8>(&string[0], string.size()));
 	}
 
-	template<>
 	inline TextBuffer& TextBuffer::operator<<(char8 argument) {
 		buffer[offset] = argument;
 
@@ -107,7 +115,22 @@
 		return *this;
 	}
 
-	template<>
+	inline TextBuffer& TextBuffer::operator<<(const sequence<char8>& argument) {
+		return operator<<(view<char8>(&argument[0], argument.count()));
+	}
+
+	inline TextBuffer& TextBuffer::operator<<(const std::string& argument) {
+		return operator<<(view<char8>(&argument[0], argument.size()));
+	}
+
+	inline TextBuffer& TextBuffer::operator<<(char8* argument) {
+		return operator<<(view<char8>(argument));
+	}
+
+	inline TextBuffer& TextBuffer::operator<<(const char8* argument) {
+		return operator<<(view<char8>(argument));
+	}
+
 	inline TextBuffer& TextBuffer::operator<<(view<char8> argument) {
 		copy(argument.begin(), argument.end(), &buffer[offset]);
 		jump(argument.count());
@@ -115,10 +138,11 @@
 		return *this;
 	}
 
-	template<>
-	inline TextBuffer& TextBuffer::operator<<(sequence<char8> argument) {
-		return operator<<(view<char8>(&argument[0], argument.count()));
-	}
+	#if ATL_STANDARD >= ATL_STANDARD_CPP17
+		inline TextBuffer& TextBuffer::operator<<(std::string_view argument) {
+			return operator<<(view<char8>(&argument[0], argument.size()));
+		}
+	#endif
 
 	inline TextBuffer& TextBuffer::padLeft(view<char8> text, uint64 padding) {
 		offset += ATL_MAX(0, padding - text.count());
