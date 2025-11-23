@@ -1,5 +1,5 @@
-// Copyright 2025 Atalante.
-// Licensed under MIT.
+// Copyright 2025 Atalante Studio.
+// Distributed under the MIT License.
 
 namespace scroll {
 	inline std::ostream& operator<<(std::ostream& stream, view<char8> view) {

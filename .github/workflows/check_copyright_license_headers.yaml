@@ -22,4 +22,4 @@ jobs:
         env:
           GITHUB_BASE_REF: ${{github.base_ref}}
           GITHUB_HEAD_REF: ${{github.head_ref}}
-          GITHUB_TREE_URL: ${{github.server_url}}/${{github.repository}}/tree/${{github.head_ref}}
+          GITHUB_HEAD_URL: ${{github.server_url}}/${{github.repository}}/tree/${{github.head_ref}}

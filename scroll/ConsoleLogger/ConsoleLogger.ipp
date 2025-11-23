@@ -1,5 +1,5 @@
-﻿// Copyright 2025 Atalante.
-// Licensed under MIT.
+﻿// Copyright 2025 Atalante Studio.
+// Distributed under the MIT License.
 
 namespace scroll {
 	inline ConsoleLogger::ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, view<char8> source) :
