@@ -3,9 +3,12 @@
 
 namespace scroll {
 	inline ConsoleLogger::ConsoleLogger(std::ostream& stream, LogLevel minLogLevel, view<char8> source) :
-		Logger(minLogLevel, source)
+		Logger(minLogLevel, source),
+		stream(&stream)
 	{
 		#if ATL_OPERATING_SYSTEM == ATL_OPERATING_SYSTEM_WINDOWS
+			SetConsoleOutputCP(CP_UTF8);
+
 			setConsoleMode(STD_OUTPUT_HANDLE);
 		#endif
 	}
@@ -26,7 +29,11 @@ namespace scroll {
 			stream->write("m", 1);
 		}
 
-		*stream << toString(argument);
+		buffer << argument;
+
+		*stream << buffer.getText();
+
+		buffer.clear();
 
 		return *this;
 	}

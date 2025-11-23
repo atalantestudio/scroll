@@ -5,6 +5,9 @@ namespace scroll {
 	template<typename T>
 	sequence<char8> BaseLogger<T>::argumentInjectionPattern = "[]";
 
+	template<typename T>
+	TextBuffer BaseLogger<T>::formatBuffer;
+
 	inline view<char8> Logger::getArgumentInjectionPattern() {
 		return argumentInjectionPattern;
 	}
@@ -15,8 +18,14 @@ namespace scroll {
 		argumentInjectionPattern = pattern;
 	}
 
-	inline sequence<char8> Logger::format(const sequence<char8>& pattern) {
-		return pattern;
+	inline sequence<char8> Logger::format(view<char8> pattern) {
+		formatBuffer << pattern;
+
+		const sequence<char8> text = formatBuffer.getText();
+
+		formatBuffer.clear();
+
+		return text;
 	}
 
 	inline LogLevel Logger::getMinLogLevel() const {
