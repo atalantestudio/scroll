@@ -1,4 +1,7 @@
-﻿namespace scroll {
+﻿// Copyright 2025 Atalante Studio.
+// Distributed under the MIT License.
+
+namespace scroll {
 	template<>
 	inline std::string toString(bool argument) {
 		return std::to_string(argument);
