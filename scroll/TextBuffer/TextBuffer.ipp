@@ -68,7 +68,17 @@ namespace scroll {
 	}
 
 	template<>
+	inline std::string toString(char8* argument) {
+		return argument;
+	}
+
+	template<>
 	inline std::string toString(const sequence<char8>& argument) {
+		return std::string(&argument[0], argument.count());
+	}
+
+	template<>
+	inline std::string toString(sequence<char8> argument) {
 		return std::string(&argument[0], argument.count());
 	}
 
@@ -79,6 +89,11 @@ namespace scroll {
 
 	template<>
 	inline std::string toString(const std::string& argument) {
+		return argument;
+	}
+
+	template<>
+	inline std::string toString(std::string argument) {
 		return argument;
 	}
 
