@@ -3,7 +3,7 @@
 
 #pragma once
 
-#ifdef ERROR
+#if defined(ERROR)
 	// NOTE: Avoid confict with macro defined in Windows.h.
 	#undef ERROR
 #endif

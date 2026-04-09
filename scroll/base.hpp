@@ -11,14 +11,14 @@
 #include <ios>
 #include <iostream>
 
-#ifndef ATL_MODULE_BASE
+#if !defined(ATL_MODULE_BASE)
 	#include "Base/Base/Base.hpp"
 #endif
 
 #if ATL_OPERATING_SYSTEM == ATL_OPERATING_SYSTEM_WINDOWS
 	#include <Windows.h>
 
-	#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+	#if !defined(ENABLE_VIRTUAL_TERMINAL_PROCESSING)
 		#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 4
 	#endif
 #endif

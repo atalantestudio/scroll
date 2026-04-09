@@ -78,7 +78,7 @@ namespace scroll {
 
 			template<typename... Argument>
 			void writeLog(uint64 offset, view<char8> bufferTemplate, view<char8> level, uint64 levelSize, view<char8> pattern, Argument&&... arguments) {
-				#ifdef _MSC_VER
+				#if defined(_MSC_VER)
 					const errno_t error = strncpy_s(&buffer.buffer[0], bufferTemplate.count() + 1, &bufferTemplate[0], bufferTemplate.count());
 
 					ATL_ASSERT(error == 0);
@@ -167,7 +167,7 @@ namespace scroll {
 
 				std::tm* dateTime;
 
-				#ifdef _MSC_VER
+				#if defined(_MSC_VER)
 					std::tm _dateTime{};
 
 					const errno_t error = localtime_s(&_dateTime, &time);
