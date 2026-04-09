@@ -163,7 +163,7 @@ namespace scroll {
 	#endif
 
 	inline TextBuffer& TextBuffer::padLeft(view<char8> text, uint64 padding) {
-		offset += ATL_MAX(0, padding - text.count());
+		offset += ATL_MAX(0, static_cast<sint32>(padding) - static_cast<sint32>(text.count()));
 
 		return operator<<(text);
 	}
@@ -171,7 +171,7 @@ namespace scroll {
 	inline TextBuffer& TextBuffer::padRight(view<char8> text, uint64 padding) {
 		TextBuffer& textBuffer = operator<<(text);
 
-		offset += ATL_MAX(0, padding - text.count());
+		offset += ATL_MAX(0, static_cast<sint32>(padding) - static_cast<sint32>(text.count()));
 
 		return textBuffer;
 	}
